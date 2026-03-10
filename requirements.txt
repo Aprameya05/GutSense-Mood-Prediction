@@ -1,0 +1,7 @@
+torch
+torchvision
+ultralytics
+Pillow
+python-dotenv
+groq
+

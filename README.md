@@ -1,132 +1,92 @@
-# 🧠 GutSense  
-### Predicting Mood Through the Gut–Brain Axis
+## GutSense
 
-GutSense is an AI-powered neuro-nutrition intelligence platform that predicts mood and energy fluctuations based on food intake. By combining microbiome research, machine learning, and user mood tracking, GutSense creates a personalized food → gut → brain prediction loop.
+GutSense is an end-to-end AI pipeline that goes from a **meal image** to a
+**proxy mood impact score** via food detection, nutrition lookup, and
+microbiome-inspired scoring.
 
----
+### Pipeline overview
 
-## 🚨 Problem
+- **Stage 1 – Food detection & classification**
+  - `pipeline.analyze_food_image(image_path)`
+  - YOLOv8 for food object detection.
+  - EfficientNet-B0 for food classification.
+  - Groq Vision API fallback for low-confidence cases.
+  - Convenience re-export in `stage1/__init__.py`.
 
-The gut-brain axis is strongly linked to mental health, cognitive performance, and emotional stability. Research shows that dietary patterns influence gut microbiota composition, which in turn affects neurotransmitter production (e.g., serotonin, dopamine), inflammation, and stress response.
+- **Stage 2 – Nutrition lookup**
+  - `stage2.get_nutrition(food_label)`
+  - Uses an in-memory nutrition DB for common foods (`dosa`, `idli`, `rice`,
+    `dal`, `curd`, `chapati`, `banana`, `vegetable curry`).
+  - Optional USDA FoodData Central integration if `USDA_API_KEY` is set.
+  - Returns a `NutritionProfile` with:
+    - `fiber`, `sugar`, `tryptophan`, `polyphenol`, `resistant_starch`, `fermented`.
 
-Despite this, existing consumer tools:
-- Track calories  
-- Track macros  
-- Track sleep  
-- Track mood  
+- **Stage 3 – Microbiome proxy scores**
+  - `stage3.compute_microbiome_scores(nutrition_dict)`
+  - Computes:
+    - `scfa_score`, `serotonin_score`, `inflammation_score`, `diversity_score`.
+  - Based on simple, explicit formulas documented in the code.
 
-None connect **what you eat → how your microbiome responds → how you’ll feel hours later**.
+- **Stage 4 – Mood prediction**
+  - `stage4.predict_mood(microbiome_scores)`
+  - Produces:
+    - `mood`, `energy`, `confidence`, `explanation`.
+  - Explanation is a human-readable narrative justified by the input scores.
 
-Mental wellness today is reactive.  
-GutSense aims to make it predictive.
+- **Full pipeline**
+  - `full_pipeline.analyze_meal(image_path)` returns:
+    - `foods`: list of detections from Stage 1.
+    - `nutrition`: list of per-food nutrition profiles.
+    - `microbiome`: combined microbiome scores across foods.
+    - `prediction`: mood / energy prediction.
 
----
+### Running locally
 
-## 💡 Solution
+1. **Install dependencies**
 
-GutSense allows users to:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-1. 📸 Photo-log meals  
-2. 🧬 Map food categories to microbiome response models  
-3. 🧠 Predict mood and energy shifts 6–12 hours ahead  
-4. 📊 Validate predictions against user-reported mood scores  
+2. **Set environment variables**
 
-Over time, the system builds a personalized microbiome-behavior model unique to each user.
+   - `GROQ_API_KEY` (required for Stage 1 Groq fallback).
+   - `USDA_API_KEY` (optional, for Stage 2 USDA lookup).
 
-Example predictions:
-- "High refined carbohydrate load detected → possible energy dip at 4 PM"
-- "Low fiber intake today → reduced gut diversity signal"
-- "Inflammatory markers elevated → higher mood variability risk tonight"
+3. **Run the Stage 1 test**
 
----
+   ```bash
+   python test_pipeline.py path/to/meal.jpg
+   ```
 
-## ⚙️ How It Works
+4. **Run the full pipeline**
 
-### 1️⃣ Meal Classification
-- Image-based food recognition (CNN / Vision Transformer)
-- Nutrient profile extraction
-- Ingredient categorization (fiber, sugar, fermented foods, omega-3, etc.)
+   ```bash
+   python test_full_pipeline.py path/to/meal.jpg
+   ```
 
-### 2️⃣ Microbiome Mapping
-Using published gut flora research:
-- Fiber → ↑ SCFA-producing bacteria  
-- Processed sugar → ↓ microbial diversity  
-- Fermented foods → ↑ Lactobacillus & Bifidobacterium  
+   The script prints:
 
-These are converted into a simulated microbiome response vector.
+   - Detected foods
+   - Nutrition values
+   - Microbiome scores
+   - Mood prediction (with explanation)
 
-### 3️⃣ Mood Prediction Engine
-Features include:
-- Nutrient vectors  
-- Inflammatory load score  
-- Time-of-day metabolic context  
-- Historical user mood data  
+### Code structure
 
-Model output:
-- Predicted mood score  
-- Predicted energy level  
-- Confidence score  
+- `models/` – model-specific code (YOLO, EfficientNet, Groq).
+- `pipeline.py` – Stage 1 pipeline (unchanged core).
+- `stage1/` – re-exports Stage 1 components.
+- `stage2/` – nutrition lookup logic.
+- `stage3/` – microbiome proxy scoring.
+- `stage4/` – mood prediction.
+- `schemas.py` – shared data shapes for type safety.
+- `full_pipeline.py` – orchestrates stages 1–4.
+- `test_pipeline.py` – Stage 1 smoke test.
+- `test_full_pipeline.py` – end-to-end smoke test for the full pipeline.
 
-### 4️⃣ Continuous Learning Loop
-Predictions are validated against:
-- User-reported mood ratings  
-- Sleep quality  
-- Productivity indicators  
+### Notes
 
-The model retrains to personalize gut-brain response per user.
-
----
-
-## 🧠 Core ML Components
-
-- Food image classification (CNN / Vision Transformer)
-- Nutrient embedding layer
-- Microbiome response simulation
-- Time-series mood forecasting model (LSTM / Transformer-based)
-- Personalization layer (user-specific calibration)
-
----
-
-## 🛠 Tech Stack (Planned)
-
-**Frontend**
-- React / Next.js  
-- TailwindCSS  
-- Mood tracking dashboard  
-
-**Backend**
-- Python (FastAPI)  
-- PyTorch / TensorFlow  
-- PostgreSQL  
-
-**Data Sources**
-- Published gut microbiome research datasets  
-- Nutritional databases (USDA / open food datasets)  
-- User-generated mood tracking data  
-
----
-
-## 📊 Future Scope
-
-- Integration with wearable APIs (HRV, sleep, stress)  
-- Real microbiome test kit compatibility  
-- Gut inflammation risk scoring  
-- Personalized food recommendations  
-- Research-grade anonymized dataset creation  
-
----
-
-## 🎯 Vision
-
-GutSense is not a diet tracker.  
-It’s a biological early-warning system for your brain.
-
-By making the gut-brain axis measurable and predictive, we move from:  
-
-**Reactive mental health → Proactive neuro-nutrition intelligence**
-
----
-
-## ⚠️ Disclaimer
-
-GutSense is a research-driven predictive model and not a medical diagnostic tool. All predictions are probabilistic and intended for wellness insights only.
+- This is a research and prototyping tool, **not** a medical device.
+- All nutrition and microbiome-related scores are heuristic and for
+  experimentation / exploration only.
