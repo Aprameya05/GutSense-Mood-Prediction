@@ -1,0 +1,9 @@
+torch
+torchvision
+ultralytics
+Pillow
+python-dotenv
+groq
+fastapi
+uvicorn[standard]
+python-multipart

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-biosense-bg text-slate-50 antialiased;
+}
+
+.biosense-gradient-bg {
+  background: radial-gradient(circle at top left, #071b2e 0, #020614 45%, #000000 100%);
+}
+
+.glass-surface {
+  background: radial-gradient(circle at top, rgba(20, 46, 90, 0.8), rgba(5, 10, 24, 0.95));
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+}
+
