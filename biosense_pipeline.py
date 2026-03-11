@@ -68,7 +68,7 @@ def analyze_image_biosense(image_path: str) -> BioSenseAnalysis:
 
     microbiome: MicrobiomeState = compute_microbiome_state(avg_nutrition)
     neuro: NeuroState = compute_neuro_state(avg_nutrition, microbiome)
-    prediction: PredictionState = predict_state(neuro, microbiome)
+    prediction: PredictionState = predict_state(neuro, microbiome, avg_nutrition)
     health: HealthScore = compute_health_score(prediction, microbiome)
     explanation = build_explanation(enriched_nutrition, microbiome, neuro, prediction, health)
 
