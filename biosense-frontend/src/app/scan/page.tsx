@@ -3,10 +3,13 @@
 import { Shell } from "@/components/Shell";
 import { useState } from "react";
 import { useBioSense } from "@/context/BioSenseContext";
+import { GlowPanel } from "@/components/GlowPanel";
+import { motion } from "framer-motion";
 
 export default function ScanPage() {
   const { runAnalysis, isAnalyzing, error } = useBioSense();
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
   async function handleAnalyze() {
     if (!file) return;
@@ -15,52 +18,128 @@ export default function ScanPage() {
 
   return (
     <Shell active="/scan">
-      <div className="glass-surface rounded-2xl p-4 md:p-6 space-y-4">
-        <h1 className="text-xl font-semibold">Scan Meal</h1>
-        <p className="mt-1 text-xs text-slate-400 max-w-xl">
-          Capture a meal image and stream it into the BioSense pipeline. This is
-          a focused scanner view that updates the shared dashboard and panels.
-        </p>
-        <div className="mt-3 flex flex-col gap-3 md:flex-row">
-          <label className="flex-1 cursor-pointer rounded-2xl border border-dashed border-slate-600/70 bg-slate-950/60 px-4 py-6 text-xs text-slate-400 hover:border-biosense-accent/70">
-            <span className="flex flex-col items-center gap-2">
-              <span className="h-9 w-9 rounded-full bg-gradient-to-br from-biosense-accent to-biosense-blue shadow-lg" />
-              <span className="text-slate-200">
-                {file ? file.name : "Drop or select a meal image"}
-              </span>
-              <span>JPEG / PNG · processed only on your local backend.</span>
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (!f) return;
-                setFile(f);
-              }}
-            />
-          </label>
-          <div className="flex w-full flex-col gap-2 md:w-48">
+      <GlowPanel
+        title="Meal scan"
+        subtitle="Optical ingestion → feature extraction → biological state simulation"
+        tone="emerald"
+        right={
+          <div className="flex items-center gap-2">
             <button
               onClick={handleAnalyze}
               disabled={!file || isAnalyzing}
-              className="rounded-full bg-gradient-to-r from-biosense-accent to-biosense-blue px-4 py-2 text-xs font-semibold text-slate-900 shadow-md disabled:opacity-50"
+              className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-[11px] uppercase tracking-[0.22em] text-cyan-200 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
             >
-              {isAnalyzing ? "Analyzing…" : "Analyze this meal"}
+              {isAnalyzing ? "Analyzing…" : "Analyze"}
             </button>
-            {error && (
-              <p className="text-[11px] text-rose-300">
-                {error}
-              </p>
+            <label className="cursor-pointer rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[11px] text-white/65 hover:border-emerald-400/30">
+              {file ? file.name : "Select image"}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  setFile(f);
+                  const url = URL.createObjectURL(f);
+                  setPreview((prev) => {
+                    if (prev) URL.revokeObjectURL(prev);
+                    return url;
+                  });
+                }}
+              />
+            </label>
+          </div>
+        }
+      >
+        {error ? (
+          <div className="mb-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-[11px] text-rose-200">
+            {error}
+          </div>
+        ) : null}
+
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur"
+          >
+            {preview ? (
+              <img
+                src={preview}
+                alt="Meal preview"
+                className="h-96 w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-96 items-center justify-center text-xs text-white/50">
+                Feed a meal image into the optical pipeline.
+              </div>
             )}
-            <p className="text-[10px] text-slate-500">
-              Tip: keep this open on a tablet while the dashboard visualizes
-              deeper layers.
-            </p>
+
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-6 rounded-2xl border border-emerald-400/15 shadow-[0_0_40px_rgba(16,185,129,0.12)]" />
+              <div className="absolute left-8 top-8 rounded-full border border-white/10 bg-black/45 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/60 backdrop-blur">
+                Optical intake
+              </div>
+            </div>
+
+            <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-black/55 px-3 py-2 backdrop-blur">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-[10px] uppercase tracking-[0.24em] text-white/55">
+                  Pipeline stages
+                </div>
+                <div className="flex gap-1">
+                  {["Vision", "Nutrition", "Microbiome", "Neuro", "Prediction"].map(
+                    (s) => (
+                      <span
+                        key={s}
+                        className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-white/60"
+                      >
+                        {s}
+                      </span>
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="space-y-3">
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-3">
+              <div className="text-[10px] uppercase tracking-[0.26em] text-white/55">
+                Capture protocol
+              </div>
+              <ul className="mt-2 space-y-1 text-[12px] text-white/60">
+                <li>- Keep plate centered; avoid heavy glare.</li>
+                <li>- Include sides/toppings for better inference.</li>
+                <li>- Use consistent lighting for longitudinal tracking.</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-3">
+              <div className="text-[10px] uppercase tracking-[0.26em] text-white/55">
+                Wearables (placeholder)
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
+                <div className="rounded-xl border border-white/10 bg-black/35 px-2 py-2 text-white/55">
+                  HR / HRV
+                </div>
+                <div className="rounded-xl border border-white/10 bg-black/35 px-2 py-2 text-white/55">
+                  Sleep
+                </div>
+                <div className="rounded-xl border border-white/10 bg-black/35 px-2 py-2 text-white/55">
+                  Steps
+                </div>
+                <div className="rounded-xl border border-white/10 bg-black/35 px-2 py-2 text-white/55">
+                  Stress
+                </div>
+              </div>
+              <div className="mt-2 text-[11px] text-white/40">
+                These streams will modulate circadian, stress, and recovery layers.
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </GlowPanel>
     </Shell>
   );
 }

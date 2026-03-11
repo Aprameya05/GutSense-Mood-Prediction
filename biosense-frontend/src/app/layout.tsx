@@ -15,6 +15,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="biosense-gradient-bg">
+        <div className="grid-overlay" />
+        <div className="scanline" />
         <BioSenseProvider>{children}</BioSenseProvider>
       </body>
     </html>
