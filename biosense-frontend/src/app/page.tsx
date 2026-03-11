@@ -3,33 +3,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Shell } from "@/components/Shell";
-import {
-  analyzeMealWithBioSense,
-  BioSenseAnalysis,
-} from "@/lib/biosenseClient";
 import { CircularGauge } from "@/components/Gauges";
 import { TimelineChart } from "@/components/TimelineChart";
+import { useBioSense } from "@/context/BioSenseContext";
 
 export default function DashboardPage() {
+  const { analysis, isAnalyzing, error, runAnalysis } = useBioSense();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<BioSenseAnalysis | null>(null);
 
   async function handleAnalyze() {
     if (!file) return;
-    setLoading(true);
-    setError(null);
-    setAnalysis(null);
-    try {
-      const result = await analyzeMealWithBioSense(file);
-      setAnalysis(result);
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to run BioSense pipeline.");
-    } finally {
-      setLoading(false);
-    }
+    await runAnalysis(file);
   }
 
   return (
@@ -53,10 +38,10 @@ export default function DashboardPage() {
             <div className="flex flex-col items-end gap-2">
               <button
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-biosense-accent to-biosense-blue px-4 py-2 text-xs font-semibold text-slate-900 shadow-lg disabled:opacity-50"
-                disabled={!file || loading}
+                disabled={!file || isAnalyzing}
                 onClick={handleAnalyze}
               >
-                {loading ? "Analyzing…" : "Run BioSense pipeline"}
+                {isAnalyzing ? "Analyzing…" : "Run BioSense pipeline"}
               </button>
               <label className="text-[11px] text-slate-400 cursor-pointer">
                 <span className="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-600/70 px-3 py-1 hover:border-biosense-accent/70">

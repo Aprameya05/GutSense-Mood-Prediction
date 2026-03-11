@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { BioSenseProvider } from "@/context/BioSenseContext";
 
 export const metadata: Metadata = {
   title: "BioSense AI",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="biosense-gradient-bg">
-        {children}
+        <BioSenseProvider>{children}</BioSenseProvider>
       </body>
     </html>
   );
