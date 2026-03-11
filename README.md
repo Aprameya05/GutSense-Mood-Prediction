@@ -111,142 +111,299 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-5. Frontends
-5.1 Legacy Vite + React frontend (frontend/)
-Simple Vite/React UI that visualizes the original GutSense pipeline.
-Talks to POST /analyze-meal.
-Kept for reference; the new dashboard supersedes it.
+## 5. Frontends
+
+### 5.1 Legacy Vite + React frontend (`frontend/`)
+
+Simple Vite + React UI that visualizes the original GutSense pipeline.  
+This frontend talks to:
+
+POST /analyze-meal
+
+This UI is kept for reference.  
+The new BioSense dashboard replaces it.
+
 Run (optional):
 
+```bash
 cd frontend
 npm install
-npm run dev  # http://localhost:5173
-5.2 BioSense AI Dashboard (biosense-frontend/)
+npm run dev
+```
+
+Runs at:
+
+http://localhost:5173
+
+
+---
+
+## 5.2 BioSense AI Dashboard (`biosense-frontend/`)
+
 A full biotech / clinical-style UI built with:
 
-Next.js (App Router, TypeScript)
-Tailwind CSS
-Framer Motion (animations)
-Chart.js + react-chartjs-2 (graphs)
-Key concepts
+- Next.js (App Router, TypeScript)
+- Tailwind CSS
+- Framer Motion (animations)
+- Chart.js + react-chartjs-2 (graphs)
+
+
+### Key Concepts
+
+#### Global State
+
 src/context/BioSenseContext.tsx
+
 Central client-side store for:
-analysis: BioSenseAnalysis | null
-isAnalyzing, error
-history: [{ id, createdAt, label, healthScore }]
-runAnalysis(file) uploads the image to /biosense/analyze-meal using src/lib/biosenseClient.ts, then updates global state.
-All pages read from this shared context so running the pipeline once updates Dashboard, Brain, Gut, Timeline, History simultaneously.
-Components
-Layout & shell:
-src/app/layout.tsx – global gradient background, grid overlay, scanline, wraps app in BioSenseProvider.
-src/components/Shell.tsx – top navbar:
-BioSense logo & subtitle (“Clinical-Style Bio-AI Dashboard”)
-Navigation: Dashboard, Scan, Brain, Gut, Timeline, History, Settings
-Status pills (systems online, prototype)
-Shared visual components:
-GlowPanel.tsx – glass, glowing, animated panels with title/subtitle.
-BioCard.tsx – small metric cards (mood, energy, risk).
-HealthMeter.tsx – circular 0–100 meter used for health scores.
-BrainMeter.tsx – neurochemistry cards built from NeuroState + PredictionState.
-MicrobiomeChart.tsx – Chart.js bar plot of microbiome metrics.
-TimelineChart.tsx / TimelineGraph.tsx – line chart for 6h/12h/24h forecast.
-Gauges.tsx (legacy from earlier design) – kept but largely superseded.
-Pages
-All pages live under src/app/ and share the same dark biotech theme.
 
-/ – Dashboard
+- analysis: BioSenseAnalysis | null
+- isAnalyzing
+- error
+- history: [{ id, createdAt, label, healthScore }]
 
-Meal image panel with scan overlay and “live layers” chips.
-Health meters:
-Overall, Brain (from HealthScore).
-Risk + state cards:
-Inflammation risk, Burnout risk, Energy, Mood.
-Brain layer:
-Serotonin, Dopamine, GABA, Cortisol, Melatonin, Focus.
-Gut layer:
-Microbiome bar chart (SCFA, diversity, probiotic, gut balance, inflammation).
-Timeline:
-Mood/Energy/Stress vs time (6/12/24h).
-Explanation:
-Narrative summary + bullet list from the explanation engine.
-/scan – Meal Scan
+runAnalysis(file) uploads the image to:
 
-Camera-style optical intake panel for selecting and previewing an image.
-Pipeline stage chips and capture guidelines.
-Wearables “slots” (HR/HRV, Sleep, Steps, Stress) as placeholders for future data.
-/microbiome – Gut Panel
+/biosense/analyze-meal
 
-Full microbiome state visualization:
-MicrobiomeChart + BioCards for SCFA, Diversity, Probiotic, Inflammation.
-“Nutrition drivers” table per detected food (fiber, polyphenol, resistant starch, fermented).
-/brain – Neuro Panel
+using:
 
-BrainMeter (serotonin, dopamine, GABA, cortisol, melatonin + focus).
-Brain and Overall health meters.
-State cards: Energy, Focus, Sleep quality, Mental clarity.
-/timeline – Prediction Timeline
+src/lib/biosenseClient.ts
 
-Forecast chart using TimelineGraph.
-Horizon cards for each timepoint (6h, 12h, 24h) with mood/energy/focus/ stress/sleep/clarity values.
-/history – History
+All pages read from the same context, so one run updates:
 
-Recent runs list with time, meal label, health score.
-Full session table of all runs (in-memory for this session).
-Summary cards:
-Best score, latest score.
-/settings – Settings & Integrations
+- Dashboard
+- Brain
+- Gut
+- Timeline
+- History
 
-Informational page describing planned wearable & API integrations.
-Frontend configuration
+
+---
+
+### Layout & Shell
+
+src/app/layout.tsx  
+Global gradient background, grid overlay, scanline, wraps app in BioSenseProvider.
+
+src/components/Shell.tsx  
+Top navbar with:
+
+- BioSense logo
+- Subtitle: Clinical-Style Bio-AI Dashboard
+- Navigation:
+  - Dashboard
+  - Scan
+  - Brain
+  - Gut
+  - Timeline
+  - History
+  - Settings
+- Status pills (systems online, prototype)
+
+
+---
+
+### Shared Components
+
+- GlowPanel.tsx — glowing glass panels
+- BioCard.tsx — metric cards
+- HealthMeter.tsx — circular meter
+- BrainMeter.tsx — neurochemistry display
+- MicrobiomeChart.tsx — microbiome bar chart
+- TimelineGraph.tsx — forecast chart
+- Gauges.tsx — legacy component (kept)
+
+
+---
+
+### Pages
+
+All pages use the same dark biotech theme.
+
+#### `/` — Dashboard
+
+- Meal image panel
+- Health meters (overall / brain)
+- Risk cards (inflammation, burnout)
+- Brain layer (serotonin, dopamine, etc.)
+- Gut layer (microbiome chart)
+- Timeline forecast
+- Explanation summary
+
+
+#### `/scan` — Meal Scan
+
+Camera-style intake panel.
+
+Includes:
+
+- Image preview
+- Pipeline stage chips
+- Capture guidelines
+- Wearable placeholders:
+  - HR / HRV
+  - Sleep
+  - Steps
+  - Stress
+
+
+#### `/microbiome` — Gut Panel
+
+- Microbiome chart
+- SCFA / diversity / probiotic / inflammation cards
+- Nutrition drivers table per food
+
+
+#### `/brain` — Neuro Panel
+
+- BrainMeter
+- Health meters
+- State cards:
+  - Energy
+  - Focus
+  - Sleep
+  - Clarity
+
+
+#### `/timeline` — Prediction Timeline
+
+- Forecast graph
+- 6h / 12h / 24h cards
+
+Shows:
+
+- Mood
+- Energy
+- Stress
+- Sleep
+- Focus
+
+
+#### `/history` — History
+
+- Recent runs list
+- Session table
+- Summary cards
+
+
+#### `/settings` — Settings & Integrations
+
+Info page describing future integrations:
+
+- Wearables
+- APIs
+- Sensors
+
+
+---
+
+### Frontend Configuration
+
 API base is configured via:
 
-NEXT_PUBLIC_BIOSENSE_API_BASE (optional)
-Defaults to http://127.0.0.1:8000 if unset.
-In src/lib/biosenseClient.ts:
+NEXT_PUBLIC_BIOSENSE_API_BASE
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_BIOSENSE_API_BASE ?? "http://127.0.0.1:8000";
-6. Running the Full System
-From the root of the repo (Gut/):
+Default:
 
-6.1 Backend (FastAPI + pipelines)
-# Install Python dependencies
+http://127.0.0.1:8000
+
+File:
+
+src/lib/biosenseClient.ts
+
+
+---
+
+## 6. Running the Full System
+
+From repo root:
+
+Gut/
+
+
+### 6.1 Backend (FastAPI + pipelines)
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
-# Start API server (FastAPI + Uvicorn)
+```
+
+Run API:
+
+```bash
 python -m uvicorn api:app --reload --port 8000
-Server runs at http://127.0.0.1:8000.
+```
 
-You can smoke-test the BioSense endpoint:
+Server:
 
+http://127.0.0.1:8000
+
+
+Test endpoint:
+
+```bash
 python - << "PY"
 import requests
 from pathlib import Path
+
 p = Path("test_gutsense.png")
-files = {"file": (p.name, p.read_bytes(), "image/png")}
-r = requests.post("http://127.0.0.1:8000/biosense/analyze-meal", files=files, timeout=120)
+
+files = {
+    "file": (p.name, p.read_bytes(), "image/png")
+}
+
+r = requests.post(
+    "http://127.0.0.1:8000/biosense/analyze-meal",
+    files=files,
+    timeout=120,
+)
+
 print("status:", r.status_code)
 print("snippet:", r.text[:400])
 PY
-6.2 BioSense Dashboard (Next.js)
+```
+
+
+### 6.2 BioSense Dashboard (Next.js)
+
+```bash
 cd biosense-frontend
-# Install JS deps (first time)
 npm install
-# Run dev server
 npm run dev
-Dashboard runs at http://localhost:3000.
+```
+
+Runs at:
+
+http://localhost:3000
+
 
 Workflow:
 
-Open http://localhost:3000.
-Go to Dashboard or Scan.
-Upload a meal image and click Run pipeline / Analyze.
-Explore:
-Brain panel
-Gut microbiome panel
-Mood/energy/inflammation panels
-Timeline forecast
-History log
-7. Notes & Disclaimers
-BioSense AI is a research / prototyping tool, not a medical device.
-All nutrition, microbiome, neurochemistry and state scores are heuristic and intended for exploration, not diagnosis or treatment.
-The architecture is intentionally transparent and rule-based in many stages so that it’s easy to reason about and extend for future research (e.g. real microbiome sequencing data, wearable streams, sleep trackers).
+1. Open dashboard
+2. Upload meal image
+3. Run pipeline
+4. View results in:
+   - Brain
+   - Gut
+   - Timeline
+   - Dashboard
+   - History
+
+
+---
+
+## 7. Notes & Disclaimers
+
+BioSense AI is a research / prototype tool.
+
+It is NOT a medical device.
+
+All nutrition, microbiome, neurochemistry and state scores are heuristic.
+
+The architecture is designed to be transparent and extensible for:
+
+- real microbiome data
+- wearable streams
+- sleep trackers
+- research experiments
