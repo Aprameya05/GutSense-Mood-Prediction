@@ -48,3 +48,18 @@ htmlcov/
 # Test artifacts
 test_image.jpg
 test_pizza.jpg
+
+# Frontend dependencies and build output
+**/node_modules/
+biosense-frontend/.next/
+biosense-frontend/out/
+biosense-frontend/.turbo/
+biosense-frontend/coverage/
+
+# JavaScript/TypeScript logs and caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+*.tsbuildinfo
