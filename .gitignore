@@ -32,6 +32,9 @@ wheels/
 yolov8n.pt
 *.pt
 
+# Mismatch logs (used for batch retraining)
+logs/
+
 # Testing
 .pytest_cache/
 .coverage

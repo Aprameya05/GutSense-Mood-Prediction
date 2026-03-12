@@ -1,47 +1,39 @@
-"""Model B: Food classification using EfficientNet-B0."""
+"""Food classification using a HuggingFace image-classification model.
 
-import torch
-from torchvision import models, transforms
+Default model: nateraw/food (EfficientNet-B2 fine-tuned on Food-101).
+Override via the FOOD_MODEL_ID environment variable to use an
+Indian-food-specific checkpoint (e.g. rajistics/indian-food-classification).
+"""
+
+import os
+
 from PIL import Image
+from transformers import pipeline as hf_pipeline
+
+FOOD_MODEL_ID = os.getenv("FOOD_MODEL_ID", "nateraw/food")
+
+_pipe = None
 
 
-def load_model():
-    """Load pretrained EfficientNet-B0 (ImageNet)."""
-    model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.IMAGENET1K_V1)
-    model.eval()
-    return model
-
-
-def get_transform():
-    """Image preprocessing for EfficientNet."""
-    weights = models.EfficientNet_B0_Weights.IMAGENET1K_V1
-    return weights.transforms()
+def get_pipeline():
+    global _pipe
+    if _pipe is None:
+        _pipe = hf_pipeline("image-classification", model=FOOD_MODEL_ID)
+    return _pipe
 
 
 def classify_food(image: Image.Image) -> dict:
     """
-    Classify a cropped food image.
+    Classify a food image.
 
     Args:
-        image: PIL Image (cropped region).
+        image: PIL Image.
 
     Returns:
-        Dict with 'food_item' and 'confidence'.
+        Dict with 'food_item' (str) and 'confidence' (float).
     """
-    model = load_model()
-    transform = get_transform()
-
-    img_tensor = transform(image).unsqueeze(0)
-    with torch.no_grad():
-        logits = model(img_tensor)
-        probs = torch.softmax(logits, dim=1)
-        conf, idx = torch.max(probs, dim=1)
-
-    class_idx = idx.item()
-    confidence = conf.item()
-    food_item = models.EfficientNet_B0_Weights.IMAGENET1K_V1.meta["categories"][class_idx]
-
+    result = get_pipeline()(image)[0]
     return {
-        "food_item": food_item,
-        "confidence": round(confidence, 2),
+        "food_item": result["label"],
+        "confidence": round(result["score"], 2),
     }
