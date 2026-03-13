@@ -62,8 +62,8 @@ def test_lookup_ifct_masala_dosa():
     assert record["source_db"] == "IFCT_2017"
     assert record["food_item"] == "masala dosa"
     assert record["portion_g"] == 250.0
-    # Scaled from 133 kcal/100g → 250g
-    assert record["calories_kcal"] == pytest.approx(133 * 2.5, abs=1.0)
+    # Scaled from 153 kcal/100g → 250g (IFCT 2017: 28g carbs, 3.5g protein, 3g fat)
+    assert record["calories_kcal"] == pytest.approx(153 * 2.5, abs=1.0)
     assert record["glycemic_load"] in ("low", "medium", "high")
 
 
@@ -196,9 +196,9 @@ def test_run_plausible_calorie_range():
 
 def test_run_custom_portion():
     result = run(STAGE1_OUTPUT, portion_g=100.0)
-    # At 100g, dosa should be ~133 kcal
+    # At 100g, dosa should be ~153 kcal (IFCT 2017: 28g carbs, 3.5g protein, 3g fat)
     dosa_item = next(i for i in result["items"] if "dosa" in i["food_item"])
-    assert dosa_item["calories_kcal"] == pytest.approx(133.0, abs=2.0)
+    assert dosa_item["calories_kcal"] == pytest.approx(153.0, abs=2.0)
 
 
 def test_run_per_item_portion_dict():
