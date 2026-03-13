@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest tests/test_stage0.py -v 2>&1)",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest tests/test_stage2.py -v 2>&1)",
+      "Bash(python -m pytest tests/test_stage0.py tests/test_stage2.py -v 2>&1)",
+      "Bash(python -m pytest tests/test_stage3.py -v 2>&1)",
+      "Bash(python -m pytest tests/test_stage7.py -v 2>&1)",
+      "Bash(python -m pytest tests/test_stage3.py tests/test_stage7.py -v --tb=short 2>&1)",
+      "Bash(python -m pytest tests/ -v --tb=short 2>&1 | tail -20)"
+    ]
+  }
+}
