@@ -89,35 +89,71 @@ profile = run("balaji_001", {
 })
 ```
 
-### Run the Full Pipeline
+### Run the Pipeline
+
+The CLI uses `--mode` to select which pipeline step to run. Each mode is independent -- run them in the order that matches your workflow.
+
+#### Mode: `meal` — log a meal (Stages 1, 2, 4, 5)
 
 ```bash
-python run_pipeline.py --image meal.jpg --user balaji_001 \
+python run_pipeline.py --mode meal --user balaji_001 --image photo.jpg \
     --mood-emoji "😐" --mood-rating 5 \
-    --cognitive-state clear --energy-level moderate --anxiety-level none \
-    --sleep-onset 23:30 --wake-time 06:15 --sleep-quality fair \
-    --bloating none --stool-quality 4 --fermented-food
+    --cognitive-state clear --energy-level moderate --anxiety-level none
 ```
-
-**CLI arguments:**
 
 | Argument | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `--image` | Yes | -- | Path to meal image |
-| `--user` | Yes | -- | User ID |
-| `--mood-emoji` | No | neutral | One of: `😄 🙂 😐 😟 😔 😴 🤯` |
+| `--image` | Yes | -- | Path to meal image (JPEG/PNG) |
+| `--meal-id` | No | auto | breakfast / lunch / dinner / snack (inferred from time if omitted) |
+| `--mood-emoji` | No | 😐 | One of: `😄 🙂 😐 😟 😔 😴 🤯` |
 | `--mood-rating` | No | 5 | 1--10 self-rated mood |
 | `--cognitive-state` | No | clear | sharp / clear / mild_fog / brain_fog / drowsy |
 | `--energy-level` | No | moderate | very_low / low / moderate / high / very_high |
 | `--anxiety-level` | No | none | none / mild / moderate / high |
+
+#### Mode: `digestion` — submit daily digestion report (Stage 3)
+
+Run this once per day, after meals are logged. Stage 3 (Gut Proxy) uses the day's accumulated nutrition totals.
+
+```bash
+python run_pipeline.py --mode digestion --user balaji_001 \
+    --bloating none --stool-quality 4 --gas-discomfort none --fermented-food
+```
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
 | `--bloating` | No | none | none / mild / moderate / severe |
 | `--stool-quality` | No | 4 | 1--7 (Bristol Stool Scale) |
 | `--gas-discomfort` | No | none | none / mild / moderate / severe |
 | `--fermented-food` | No | false | Flag: consumed fermented food today |
-| `--sleep-onset` | No | -- | HH:MM (skips Stage 6 if omitted) |
-| `--wake-time` | No | -- | HH:MM (skips Stage 6 if omitted) |
+
+#### Mode: `sleep` — log sleep (Stage 6)
+
+```bash
+python run_pipeline.py --mode sleep --user balaji_001 \
+    --sleep-onset 23:30 --wake-time 06:15 --sleep-quality fair \
+    --night-awakenings 1 --screen-before-bed 45
+```
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--sleep-onset` | Yes | -- | Sleep start time HH:MM |
+| `--wake-time` | Yes | -- | Wake time HH:MM |
 | `--sleep-quality` | No | good | poor / fair / good / excellent |
-| `--skip-groq` | No | false | Use placeholders instead of Groq API calls |
+| `--night-awakenings` | No | 0 | Number of times woken up |
+| `--caffeine-after-14h` | No | false | Flag: had caffeine after 14:00 |
+| `--screen-before-bed` | No | 30 | Screen time before bed (minutes) |
+| `--meal-to-bed-hours` | No | 3.0 | Hours between last meal and sleep onset |
+
+#### Mode: `daily-summary` — run Stages 7, 8, 9, 10
+
+Computes time-series patterns, baselines, risk detection, and generates Groq insights. Stages 7 and 8 require 30+ days of data; Stage 9 requires 7+ days.
+
+```bash
+python run_pipeline.py --mode daily-summary --user balaji_001
+# Skip Groq API calls (for offline testing):
+python run_pipeline.py --mode daily-summary --user balaji_001 --skip-groq
+```
 
 Stage 7 and 8 automatically activate after 30 days of accumulated data in `data/daily_logs/`.
 
@@ -152,6 +188,43 @@ Each day's data is stored as a single JSON file with a **nested schema** under `
 
 Stages 7, 8, and 9 consume flat records. `utils/flatten.py` provides `extract_flat_record(daily_log)` which maps nested fields to the expected flat keys, falling back to top-level keys for backwards compatibility with existing flat-format records.
 
+## Frontend Integration
+
+The pipeline backend is **CLI-only** — there is no HTTP server included. To build a mobile or web app on top of GutSense, a REST API wrapper must be built around the existing stage modules.
+
+### Developer Guide
+
+`app_dev_prompt.md` is a comprehensive specification for React Native (Expo) developers. It covers:
+
+- Full navigation structure (drawer + nested stack)
+- Screen-by-screen specifications with exact field names, enums, and value ranges from the Python source
+- Complete REST API contract with TypeScript request/response schemas
+- TypeScript data model interfaces for every stage output
+- Business logic rules (unlock thresholds, digestion-per-day, sleep overwrite warning)
+- Push notification triggers
+
+### REST API Wrapper Required
+
+Build a FastAPI or Flask server that wraps each stage's `run()` function. The 12 endpoints described in `app_dev_prompt.md` map to the following pipeline operations:
+
+| Endpoint | Stage(s) | Python entry point |
+|----------|----------|--------------------|
+| `POST /api/auth/register` | Stage 0 | `stage0.profile.run()` |
+| `POST /api/meals/log` | Stages 1, 2 | `pipeline.analyze_food_image()` + `stage2.nutrition.run()` |
+| `POST /api/digestion/submit` | Stage 3 | `stage3.gut_proxy.run()` + `utils.storage.update_digestion()` |
+| `POST /api/mood/submit` | Stages 4, 5 | `stage4.mood.run()` + `stage5.metabolic.run()` |
+| `POST /api/meals/save` | storage only | `utils.storage.append_meal()` |
+| `POST /api/sleep/log` | Stage 6 | `stage6.sleep.run()` + `utils.storage.update_sleep()` |
+| `GET /api/daily-log/:date` | storage only | `utils.storage.load_daily_log()` |
+| `GET /api/history` | storage only | iterate `data/daily_logs/*.json` |
+| `GET /api/trends` | Stage 7 | `stage7.patterns.run()` |
+| `GET /api/baselines` | Stage 8 | `stage8.baseline.run()` |
+| `GET /api/risks` | Stage 9 | `stage9.risk.run()` |
+| `GET /api/insights` | Stage 10 | `stage10.insights.run()` |
+| `GET/PUT /api/profile` | Stage 0 | `stage0.profile.load()` / `stage0.profile.run()` |
+
+All stage modules are independently importable and self-contained. No changes to stage logic are needed to build the API layer.
+
 ## Project Structure
 
 ```
@@ -183,7 +256,9 @@ GutSense-Mood-Prediction/
 │   └── generate.py              # 30-day nested-schema synthetic data generator
 ├── tests/
 │   ├── test_stage{0-10}.py      # Per-stage tests
-│   └── test_storage_helpers.py  # Tests for daily log storage helpers
+│   ├── test_run_pipeline.py     # CLI mode integration tests (meal/sleep/digestion/daily-summary)
+│   ├── test_storage_helpers.py  # Tests for daily log storage helpers
+│   └── test_validators_v2.py    # Tests for nested-schema input validators
 ├── data/
 │   ├── user_profiles/           # Stage 0 output
 │   ├── nutrition_db/            # IFCT 2017, INDB local JSON (values per 100g edible portion)
@@ -192,11 +267,12 @@ GutSense-Mood-Prediction/
 │   ├── baselines/               # Stage 8 output
 │   └── synthetic/               # Synthetic test data reference
 ├── pipeline.py                  # Stage 1 entry point
-├── run_pipeline.py              # Full pipeline CLI runner
+├── run_pipeline.py              # Full pipeline CLI runner (4 modes: meal/sleep/digestion/daily-summary)
 ├── e2e_test.py                  # End-to-end integration test (all stages, no image required)
+├── app_dev_prompt.md            # React Native mobile app developer guide (API contract, TypeScript schemas)
 ├── requirements.txt
-├── SPEC.md                      # Full pipeline specification
-└── CLAUDE.md                    # Build instructions
+├── SPEC.md                      # Full pipeline specification with research citations
+└── CLAUDE.md                    # Build instructions for AI agents
 ```
 
 ## Key Proxy Models
@@ -306,6 +382,56 @@ log = load_daily_log("2026-03-13")
 | `GROQ_API_KEY` | Yes | Groq API key for vision, fallback, and insight generation |
 | `FDC_API_KEY` | No | USDA FoodData Central API key for Stage 2 secondary lookup |
 | `FOOD_MODEL_ID` | No | Override EfficientNet model (default: `nateraw/food`) |
+
+## Recent Changes
+
+### Pipeline Architecture Overhaul (March 2026)
+
+The following changes were introduced in a single comprehensive commit that migrated the pipeline from a flat-record architecture to a nested, incrementally-built daily log system.
+
+#### Nested DailyLog Schema (`utils/daily_log_schema.py`)
+
+Replaced the previous flat JSON output with a fully typed, nested `DailyLog` structure using Python `TypedDict`. Key types: `MealEntry`, `DigestInput`, `SleepInput`, `SleepOutput`, `DailyTotals`, `DailyGut`, `DailyMoodSummary`, `DailyLog`. The `empty_daily_log()` factory returns a correctly scaffolded default log for a given date and user.
+
+#### Modal CLI with 4 Modes (`run_pipeline.py`)
+
+`run_pipeline.py` was refactored from a single monolithic command to a `--mode` dispatch system:
+
+| Mode | Stages | Purpose |
+|------|--------|---------|
+| `meal` | 1, 2, 4, 5 | Log a meal with photo, nutrition analysis, and mood check-in |
+| `digestion` | 3 | Submit daily digestion report (once per day) |
+| `sleep` | 6 | Log sleep data and compute sleep metrics |
+| `daily-summary` | 7, 8, 9, 10 | Run time-series analysis, baselines, risk detection, insights |
+
+This maps directly to the four main user actions in the mobile app flow.
+
+#### Flatten Utility for Backward Compatibility (`utils/flatten.py`)
+
+`extract_flat_record(daily_log)` maps fields from the nested `DailyLog` schema to the flat-key format expected by Stages 7, 8, and 9. Includes a fallback to top-level keys so existing flat-format records continue to work without migration.
+
+#### Enhanced Validators (`utils/validators.py`)
+
+`validate_stage_input()` was extended to cover the nested schema across all stage input types: `stage0_profile`, `stage1_output`, `stage2_output`, `stage3_input`, `stage4_input`, `stage5_input`, `stage6_input`, `stage7_input`, `stage8_input`, `stage9_input`. Validates required keys, types, and enum values, returning detailed error messages.
+
+#### Storage Helpers (`utils/storage.py`)
+
+New incremental daily log helpers:
+- `append_meal(date, meal_entry)` — add a `MealEntry` to the meals list, recompute `daily_totals` and `daily_mood_summary`
+- `update_sleep(date, sleep_input, sleep_output)` — write Stage 6 output into the day's log
+- `update_digestion(date, digestion_data)` — write digestion report and Stage 3 gut proxy output
+- `load_daily_log(date, user_id)` — returns the log for a given date, or an empty scaffold if the file does not yet exist
+
+#### Synthetic Data Generator Rewrite (`synthetic/generate.py`)
+
+Fully rewritten to generate 30 days of nested-schema `DailyLog` records. Includes 2--3 "bad weeks" (high glycemic load, late meals, poor sleep) and 1 "good week" for contrast, plus 3--5 deliberate food misclassifications to exercise Stage 1's mismatch logger and the retraining loop.
+
+#### New Test Suites (`tests/`)
+
+Three new test files added alongside the existing per-stage tests:
+- `test_run_pipeline.py` — tests all 4 CLI modes end-to-end using synthetic fixtures
+- `test_storage_helpers.py` — unit tests for `append_meal`, `update_sleep`, `update_digestion`, `load_daily_log`
+- `test_validators_v2.py` — tests the nested-schema validators for all stage input types
 
 ## Research Citations
 
