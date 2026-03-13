@@ -1,0 +1,43 @@
+{
+  "baseline_mood": -1.0,
+  "baseline_sleep_hours": 5.19,
+  "baseline_glucose_spike": "high",
+  "baseline_digestion_stability": 0.5696,
+  "baseline_MDI": 0.2635,
+  "baseline_inflammation_risk": 0.5985,
+  "baseline_cognitive_score": -1.85,
+  "baseline_neuro_stress": 0.6036,
+  "all_baselines_stable": false,
+  "baseline_period_days": 30,
+  "stability_details": {
+    "mood": {
+      "cv_percent": 0.0,
+      "stable": true
+    },
+    "sleep_hours": {
+      "cv_percent": 4.69,
+      "stable": true
+    },
+    "digestion_stability": {
+      "cv_percent": 17.64,
+      "stable": false
+    },
+    "MDI": {
+      "cv_percent": 30.38,
+      "stable": false
+    },
+    "inflammation": {
+      "cv_percent": 16.68,
+      "stable": false
+    },
+    "cognitive_score": {
+      "cv_percent": 7.8,
+      "stable": true
+    },
+    "neuro_stress": {
+      "cv_percent": 16.97,
+      "stable": false
+    }
+  },
+  "timestamp": "2026-03-13T08:37:13.411544+00:00"
+}
