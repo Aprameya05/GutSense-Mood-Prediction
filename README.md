@@ -41,7 +41,7 @@ Meal Image
 |-------|--------|---------|-------------|
 | 0 | `stage0/profile.py` | User baseline profiling | Mifflin-St Jeor BMR, TDEE with activity multipliers |
 | 1 | `stage1/pipeline.py` | Food identification | Dual-model: EfficientNet-B2 + Groq Vision in parallel |
-| 2 | `stage2/nutrition.py` | Nutritional calibration | 4-tier lookup: IFCT 2017 -> USDA FDC -> INDB -> Groq fallback |
+| 2 | `stage2/nutrition.py` | Nutritional calibration | 4-tier lookup: IFCT 2017 -> USDA FDC -> INDB -> Groq fallback; DB values stored per 100g edible portion |
 | 3 | `stage3/gut_proxy.py` | Gut microbiome proxy | MDI, IRS, DSS scores from diet + digestion self-report |
 | 4 | `stage4/mood.py` | Mood & cognitive logging | PANAS-derived emoji mapping, cognitive penalty scoring |
 | 5 | `stage5/metabolic.py` | Metabolic response | Glycemic load spike estimation, fiber attenuation, late-meal penalty |
@@ -146,16 +146,20 @@ GutSense-Mood-Prediction/
 │   ├── groq_client.py           # Shared Groq client (backoff, caching)
 │   ├── storage.py               # JSON/SQLite I/O helpers
 │   └── validators.py            # Input schema validation per stage
+├── synthetic/
+│   └── generate.py              # 30-day synthetic data generator (Stage SIM)
 ├── tests/
 │   └── test_stage{0-10}.py      # 311 tests across all stages
 ├── data/
 │   ├── user_profiles/           # Stage 0 output
-│   ├── nutrition_db/            # IFCT 2017, INDB local JSON
+│   ├── nutrition_db/            # IFCT 2017, INDB local JSON (values per 100g edible portion)
 │   ├── nutrition_cache.json     # Groq response cache
 │   ├── daily_logs/              # Per-day aggregated stage outputs
-│   └── baselines/               # Stage 8 output
+│   ├── baselines/               # Stage 8 output
+│   └── synthetic/               # Synthetic test data reference
 ├── pipeline.py                  # Stage 1 entry point
 ├── run_pipeline.py              # Full pipeline CLI runner
+├── e2e_test.py                  # End-to-end integration test (all stages, no image required)
 ├── requirements.txt
 ├── SPEC.md                      # Full pipeline specification
 └── CLAUDE.md                    # Build instructions
@@ -203,7 +207,7 @@ Risk scoring: 0 flags = none, 1--2 = mild, 3--4 = moderate, 5+ = elevated (profe
 ## Testing
 
 ```bash
-# Run all tests
+# Run all 311 tests
 python -m pytest tests/ -v
 
 # Run a specific stage's tests
@@ -211,7 +215,32 @@ python -m pytest tests/test_stage4.py -v
 
 # Run with coverage
 python -m pytest tests/ --cov=. --cov-report=term-missing
+
+# End-to-end integration test (no API key or image required)
+python e2e_test.py
 ```
+
+### Synthetic Data Testing
+
+`synthetic/generate.py` produces 30 days of realistic vegetarian-Indian-diet data for testing Stages 7--10 without real images or API calls. Run it standalone to generate logs and immediately verify the pipeline:
+
+```bash
+python synthetic/generate.py
+```
+
+This creates a `synthetic_001` user profile, writes 30 daily log files to `data/daily_logs/`, then runs Stages 7--10 and prints a verification summary. The dataset is structured so the final two weeks are deliberately bad, guaranteeing measurable risk signals:
+
+| Metric verified | Expected result |
+|-----------------|-----------------|
+| Stage 7 GL <-> mood correlation | r < -0.5 (negative, typically around -0.88) |
+| Stage 8 inflammation CV | > 15% (correctly unstable across bad weeks) |
+| Stage 8 neuro_stress CV | > 15% (correctly unstable) |
+| Stage 9 risk flags | 5+ flags, level = elevated |
+| Stage 9 persistent brain_fog | >= 5 of last 7 days |
+| Stage 9 chronic sleep debt | cumulative debt > 10h for all last 14 days |
+| Stage 9 glucose dysregulation | high spike on >= 60% of last 14 days |
+
+The generator uses seed=42 for reproducibility. Four deliberate food misclassifications (days 5, 12, 19, 25) are embedded for retraining-loop testing.
 
 ## Environment Variables
 
