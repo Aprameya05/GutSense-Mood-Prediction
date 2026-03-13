@@ -121,6 +121,37 @@ python run_pipeline.py --image meal.jpg --user balaji_001 \
 
 Stage 7 and 8 automatically activate after 30 days of accumulated data in `data/daily_logs/`.
 
+## Daily Log Schema
+
+Each day's data is stored as a single JSON file with a **nested schema** under `data/daily_logs/YYYY-MM-DD.json`:
+
+```json
+{
+  "date": "2026-03-13",
+  "meals": [
+    {
+      "meal_id": "breakfast",
+      "meal_time": "07:30",
+      "stage1": { "food_items": ["idli"], "confidence": 0.82, "source": "groq" },
+      "stage2": { "items": [], "totals": { "calories_kcal": 500, "fiber_g": 7, "glycemic_load": "low", "..." } },
+      "stage4": { "mood_score": 2, "cognitive_state": "clear", "energy_level": "high", "..." },
+      "stage5": { "estimated_glucose_spike": "mild", "energy_crash_probability": 0.15, "..." }
+    },
+    { "meal_id": "lunch", "..." },
+    { "meal_id": "dinner", "..." }
+  ],
+  "digestion": { "bloating": "none", "stool_quality": 4, "fermented_food_today": true, "..." },
+  "sleep": { "sleep_hours": 7.5, "cumulative_debt_7d": 2.1, "circadian_regularity_index": 0.85, "..." },
+  "daily_totals": { "calories_kcal": 2100, "fiber_g": 28, "tryptophan_mg": 220, "glycemic_load": "low", "..." },
+  "daily_gut":   { "microbiome_diversity_index": 0.70, "inflammation_risk_score": 0.28, "..." },
+  "daily_mood_summary": { "avg_mood_score": 1.67, "dominant_cognitive_state": "clear", "..." }
+}
+```
+
+`daily_totals` is the sum of `stage2.totals` across all meals. `daily_gut` is computed by Stage 3 from `daily_totals` + `digestion`. `daily_mood_summary` aggregates the three per-meal Stage 4 readings.
+
+Stages 7, 8, and 9 consume flat records. `utils/flatten.py` provides `extract_flat_record(daily_log)` which maps nested fields to the expected flat keys, falling back to top-level keys for backwards compatibility with existing flat-format records.
+
 ## Project Structure
 
 ```
@@ -143,18 +174,21 @@ GutSense-Mood-Prediction/
 ├── stage10/insights.py          # Groq-powered insight generation
 ├── utils/
 │   ├── config.py                # Environment variable loading
+│   ├── daily_log_schema.py      # DailyLog TypedDicts + empty_daily_log() scaffold
+│   ├── flatten.py               # extract_flat_record() for Stages 7/8/9
 │   ├── groq_client.py           # Shared Groq client (backoff, caching)
-│   ├── storage.py               # JSON/SQLite I/O helpers
+│   ├── storage.py               # JSON/SQLite I/O + daily log helpers
 │   └── validators.py            # Input schema validation per stage
 ├── synthetic/
-│   └── generate.py              # 30-day synthetic data generator (Stage SIM)
+│   └── generate.py              # 30-day nested-schema synthetic data generator
 ├── tests/
-│   └── test_stage{0-10}.py      # 311 tests across all stages
+│   ├── test_stage{0-10}.py      # Per-stage tests
+│   └── test_storage_helpers.py  # Tests for daily log storage helpers
 ├── data/
 │   ├── user_profiles/           # Stage 0 output
 │   ├── nutrition_db/            # IFCT 2017, INDB local JSON (values per 100g edible portion)
 │   ├── nutrition_cache.json     # Groq response cache
-│   ├── daily_logs/              # Per-day aggregated stage outputs
+│   ├── daily_logs/              # Per-day nested DailyLog JSON files
 │   ├── baselines/               # Stage 8 output
 │   └── synthetic/               # Synthetic test data reference
 ├── pipeline.py                  # Stage 1 entry point
@@ -202,16 +236,19 @@ Risk scoring: 0 flags = none, 1--2 = mild, 3--4 = moderate, 5+ = elevated (profe
 | Nutritional DBs | IFCT 2017, USDA FoodData Central, INDB |
 | LLM Reasoning | Groq free tier (fallback, summarization, insights) |
 | Storage | Local JSON + SQLite |
-| Testing | pytest (311 tests) |
+| Testing | pytest (326 tests) |
 
 ## Testing
 
 ```bash
-# Run all 311 tests
+# Run all 326 tests
 python -m pytest tests/ -v
 
 # Run a specific stage's tests
 python -m pytest tests/test_stage4.py -v
+
+# Run storage helper tests
+python -m pytest tests/test_storage_helpers.py -v
 
 # Run with coverage
 python -m pytest tests/ --cov=. --cov-report=term-missing
@@ -222,17 +259,17 @@ python e2e_test.py
 
 ### Synthetic Data Testing
 
-`synthetic/generate.py` produces 30 days of realistic vegetarian-Indian-diet data for testing Stages 7--10 without real images or API calls. Run it standalone to generate logs and immediately verify the pipeline:
+`synthetic/generate.py` produces 30 days of realistic vegetarian-Indian-diet data in the nested DailyLog schema for testing Stages 7--10 without real images or API calls. Run it standalone to generate logs and immediately verify the pipeline:
 
 ```bash
 python synthetic/generate.py
 ```
 
-This creates a `synthetic_001` user profile, writes 30 daily log files to `data/daily_logs/`, then runs Stages 7--10 and prints a verification summary. The dataset is structured so the final two weeks are deliberately bad, guaranteeing measurable risk signals:
+This creates a `synthetic_001` user profile, writes 30 nested DailyLog JSON files to `data/daily_logs/`, then runs Stages 7--10 and prints a verification summary. Each day contains 3 meals (breakfast / lunch / dinner) with per-meal Stage 1/2/4/5 sub-dicts. The dataset is structured so the final two weeks are deliberately bad, guaranteeing measurable risk signals:
 
 | Metric verified | Expected result |
 |-----------------|-----------------|
-| Stage 7 GL <-> mood correlation | r < -0.5 (negative, typically around -0.88) |
+| Stage 7 GL <-> mood correlation | r < -0.5 (negative, typically around -0.81) |
 | Stage 8 inflammation CV | > 15% (correctly unstable across bad weeks) |
 | Stage 8 neuro_stress CV | > 15% (correctly unstable) |
 | Stage 9 risk flags | 5+ flags, level = elevated |
@@ -240,7 +277,27 @@ This creates a `synthetic_001` user profile, writes 30 daily log files to `data/
 | Stage 9 chronic sleep debt | cumulative debt > 10h for all last 14 days |
 | Stage 9 glucose dysregulation | high spike on >= 60% of last 14 days |
 
-The generator uses seed=42 for reproducibility. Four deliberate food misclassifications (days 5, 12, 19, 25) are embedded for retraining-loop testing.
+The generator uses seed=42 for reproducibility. Four deliberate food misclassifications (days 5, 12, 19, 25) are embedded in the lunch meal's Stage 1 sub-dict for retraining-loop testing.
+
+### Storage Helpers
+
+`utils/storage.py` provides helpers for building and updating daily logs incrementally:
+
+```python
+from utils.storage import append_meal, update_sleep, update_digestion, load_daily_log
+
+# Add a meal (recomputes daily_totals and daily_mood_summary automatically)
+append_meal("2026-03-13", meal_entry)
+
+# Update sleep section without touching meals
+update_sleep("2026-03-13", sleep_data)
+
+# Update digestion section without touching meals or sleep
+update_digestion("2026-03-13", digestion_data)
+
+# Load a log (returns empty scaffold if the file doesn't exist yet)
+log = load_daily_log("2026-03-13")
+```
 
 ## Environment Variables
 
