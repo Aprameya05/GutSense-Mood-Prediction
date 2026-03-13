@@ -15,7 +15,12 @@
       "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -x -q --tb=short 2>&1 | tail -20)",
       "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python synthetic/generate.py 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q --tb=short 2>&1 | tail -10)",
-      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q 2>&1 | tail -5)"
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q 2>&1 | tail -5)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/test_storage_helpers.py -v 2>&1 | tail -40)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/test_stage7.py tests/test_stage8.py tests/test_stage9.py -v 2>&1 | tail -60)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -v --tb=short 2>&1 | tail -50)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python e2e_test.py 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q 2>&1 | tail -10)"
     ]
   }
 }

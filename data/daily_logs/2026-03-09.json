@@ -1,47 +1,214 @@
 {
   "date": "2026-03-09",
-  "food_items": [
-    "dal fry"
+  "meals": [
+    {
+      "meal_id": "breakfast",
+      "meal_time": "07:30",
+      "stage1": {
+        "food_items": [
+          "white bread"
+        ],
+        "en_pred": "white bread",
+        "confidence": 0.71,
+        "source": "synthetic",
+        "timestamp": "2026-03-09T07:30:00+00:00"
+      },
+      "stage2": {
+        "items": [],
+        "totals": {
+          "calories_kcal": 411.1,
+          "carbs_g": 99.95,
+          "protein_g": 15.5,
+          "fat_g": 20.25,
+          "fiber_g": 1.875,
+          "tryptophan_mg": 38.35,
+          "omega3_mg": 16.425,
+          "iron_mg": 1.25,
+          "magnesium_mg": 50.175,
+          "b6_mg": 0.2975,
+          "b12_mcg": 0.0,
+          "zinc_mg": 1.7,
+          "glycemic_load": "high"
+        }
+      },
+      "stage4": {
+        "mood_score": -2,
+        "mood_label": "sad",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "very_low",
+        "anxiety_level": "high",
+        "emoji_used": "😔",
+        "hours_since_meal": 2.0,
+        "tryptophan_context_mg": 38.35
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 55.8,
+        "fiber_attenuation_factor": 0.7435,
+        "energy_crash_probability": 0.68,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "high"
+      }
+    },
+    {
+      "meal_id": "lunch",
+      "meal_time": "13:00",
+      "stage1": {
+        "food_items": [
+          "dal fry"
+        ],
+        "en_pred": "dal fry",
+        "confidence": 0.79,
+        "source": "synthetic",
+        "timestamp": "2026-03-09T13:00:00+00:00"
+      },
+      "stage2": {
+        "items": [],
+        "totals": {
+          "calories_kcal": 657.76,
+          "carbs_g": 159.92,
+          "protein_g": 24.8,
+          "fat_g": 32.4,
+          "fiber_g": 3.0,
+          "tryptophan_mg": 61.36,
+          "omega3_mg": 26.28,
+          "iron_mg": 2.0,
+          "magnesium_mg": 80.28,
+          "b6_mg": 0.476,
+          "b12_mcg": 0.0,
+          "zinc_mg": 2.72,
+          "glycemic_load": "high"
+        }
+      },
+      "stage4": {
+        "mood_score": -2,
+        "mood_label": "sad",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "very_low",
+        "anxiety_level": "high",
+        "emoji_used": "😔",
+        "hours_since_meal": 2.0,
+        "tryptophan_context_mg": 61.36
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 55.8,
+        "fiber_attenuation_factor": 0.7435,
+        "energy_crash_probability": 0.68,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "high"
+      },
+      "misclassification_flag": true,
+      "correct_food_items": [
+        "rajma masala"
+      ]
+    },
+    {
+      "meal_id": "dinner",
+      "meal_time": "21:30",
+      "stage1": {
+        "food_items": [
+          "white rice"
+        ],
+        "en_pred": "white rice",
+        "confidence": 0.63,
+        "source": "synthetic",
+        "timestamp": "2026-03-09T21:30:00+00:00"
+      },
+      "stage2": {
+        "items": [],
+        "totals": {
+          "calories_kcal": 575.54,
+          "carbs_g": 139.93,
+          "protein_g": 21.7,
+          "fat_g": 28.35,
+          "fiber_g": 2.625,
+          "tryptophan_mg": 53.69,
+          "omega3_mg": 22.995,
+          "iron_mg": 1.75,
+          "magnesium_mg": 70.245,
+          "b6_mg": 0.4165,
+          "b12_mcg": 0.0,
+          "zinc_mg": 2.38,
+          "glycemic_load": "high"
+        }
+      },
+      "stage4": {
+        "mood_score": -2,
+        "mood_label": "sad",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "very_low",
+        "anxiety_level": "high",
+        "emoji_used": "😔",
+        "hours_since_meal": 2.0,
+        "tryptophan_context_mg": 53.69
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 55.8,
+        "fiber_attenuation_factor": 0.7435,
+        "energy_crash_probability": 0.68,
+        "late_meal_penalty_applied": true,
+        "insulin_demand_proxy": "high"
+      }
+    }
   ],
-  "calories_kcal": 1716.1,
-  "fiber_g": 7.4,
-  "tryptophan_mg": 163.6,
-  "fat_g": 80.3,
-  "carbohydrates_g": 401.3,
-  "glycemic_load": "high",
-  "fermented_food_consumed": false,
-  "late_meal": true,
-  "microbiome_diversity_index": 0.1428,
-  "inflammation_risk_score": 0.8996,
-  "inflammation_risk_level": "high",
-  "digestion_stability_score": 0.4129,
-  "scfa_production_proxy": "low",
-  "bloating": "severe",
-  "stool_quality": 7,
-  "mood_score": -2,
-  "mood_label": "sad",
-  "cognitive_state": "brain_fog",
-  "cognitive_penalty": -1.5,
-  "energy_level": "very_low",
-  "anxiety_level": "high",
-  "emoji_used": "😔",
-  "composite_wellbeing_score": 0.0,
-  "estimated_glucose_spike": "high",
-  "fiber_attenuation_factor": 0.7283,
-  "energy_crash_probability": 0.622,
-  "late_meal_penalty_applied": true,
-  "insulin_demand_proxy": "high",
-  "tdee_percentage_consumed": 88.7,
-  "sleep_onset": "02:00",
-  "sleep_hours": 5.05,
-  "sleep_debt": 2.45,
-  "cumulative_debt_7d": 19.08,
-  "cumulative_sleep_debt": 19.08,
-  "circadian_regularity_index": 0.2546,
-  "neurological_stress_proxy": 0.7508,
-  "sleep_stability": "low",
-  "sleep_stability_label": "low",
+  "digestion": {
+    "bloating": "moderate",
+    "stool_quality": 7,
+    "fermented_food_today": false,
+    "gas_discomfort": "moderate",
+    "digestion_quality": "fair"
+  },
+  "sleep": {
+    "sleep_onset": "01:00",
+    "wake_time": "07:00",
+    "sleep_hours": 4.98,
+    "sleep_debt": 2.52,
+    "cumulative_debt_7d": 17.22,
+    "circadian_regularity_index": 0.2463,
+    "neurological_stress_proxy": 0.72,
+    "sleep_quality": "poor",
+    "sleep_stability": "low",
+    "night_awakenings": 1,
+    "caffeine_after_14h": true,
+    "screen_before_bed_min": 75
+  },
+  "daily_totals": {
+    "calories_kcal": 1644.4,
+    "carbs_g": 399.8,
+    "protein_g": 62.0,
+    "fat_g": 81.0,
+    "fiber_g": 7.5,
+    "glycemic_load": "high",
+    "tryptophan_mg": 153.4,
+    "omega3_mg": 65.7,
+    "iron_mg": 5.0,
+    "magnesium_mg": 200.7,
+    "b6_mg": 1.19,
+    "b12_mcg": 0.0,
+    "zinc_mg": 6.8
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.223,
+    "inflammation_risk_score": 0.7916,
+    "inflammation_risk_level": "high",
+    "digestion_stability_score": 0.5188,
+    "scfa_production_proxy": "low"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": -2.0,
+    "min_mood_score": -2,
+    "max_mood_score": -2,
+    "dominant_cognitive_state": "brain_fog"
+  },
   "diet_type": "vegetarian",
+  "late_meal": true,
+  "cognitive_penalty": -1.5,
+  "estimated_glucose_spike": "high",
   "misclassification_flag": true,
   "correct_food_items": [
     "rajma masala"

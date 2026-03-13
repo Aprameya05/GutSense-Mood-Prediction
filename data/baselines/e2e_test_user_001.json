@@ -1,43 +1,43 @@
 {
-  "baseline_mood": 6.57,
-  "baseline_sleep_hours": 7.18,
-  "baseline_glucose_spike": "moderate",
-  "baseline_digestion_stability": 0.6823,
-  "baseline_MDI": 0.6501,
-  "baseline_inflammation_risk": 0.4225,
-  "baseline_cognitive_score": 6.49,
-  "baseline_neuro_stress": 0.3435,
+  "baseline_mood": -1.08,
+  "baseline_sleep_hours": 5.37,
+  "baseline_glucose_spike": "high",
+  "baseline_digestion_stability": 0.5088,
+  "baseline_MDI": 0.289,
+  "baseline_inflammation_risk": 0.6016,
+  "baseline_cognitive_score": -1.92,
+  "baseline_neuro_stress": 0.5832,
   "all_baselines_stable": false,
   "baseline_period_days": 30,
   "stability_details": {
     "mood": {
-      "cv_percent": 9.94,
+      "cv_percent": 0.0,
       "stable": true
     },
     "sleep_hours": {
-      "cv_percent": 5.75,
+      "cv_percent": 5.19,
       "stable": true
     },
     "digestion_stability": {
-      "cv_percent": 11.68,
-      "stable": true
+      "cv_percent": 20.97,
+      "stable": false
     },
     "MDI": {
-      "cv_percent": 12.89,
-      "stable": true
+      "cv_percent": 25.86,
+      "stable": false
     },
     "inflammation": {
-      "cv_percent": 29.16,
+      "cv_percent": 15.62,
       "stable": false
     },
     "cognitive_score": {
-      "cv_percent": 9.94,
+      "cv_percent": 7.8,
       "stable": true
     },
     "neuro_stress": {
-      "cv_percent": 29.01,
+      "cv_percent": 23.1,
       "stable": false
     }
   },
-  "timestamp": "2026-03-13T07:47:11.765966+00:00"
+  "timestamp": "2026-03-13T17:11:56.355021+00:00"
 }

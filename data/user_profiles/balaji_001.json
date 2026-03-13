@@ -1,5 +1,5 @@
 {
-  "user_id": "e2e_test_user_001",
+  "user_id": "balaji_001",
   "age": 28,
   "sex": "male",
   "height_cm": 175.0,
@@ -8,13 +8,11 @@
   "activity_level": "moderate",
   "sleep_schedule": "23:00-06:30",
   "known_conditions": [],
-  "supplements": [
-    "vitamin_d"
-  ],
+  "supplements": [],
   "medications": [],
   "bmr_kcal": 1658.8,
   "tdee_kcal": 2571.1,
   "activity_multiplier": 1.55,
   "baseline_established": true,
-  "timestamp": "2026-03-13T17:11:55.748760+00:00"
+  "timestamp": "2026-03-13T16:00:06.959251+00:00"
 }

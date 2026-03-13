@@ -3,12 +3,8 @@
 Runs Stages 0-10 with synthetic data (no image, no Groq calls needed).
 """
 
-import json
-import math
-import random
-import shutil
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -229,71 +225,22 @@ assert 0.0 <= stage6["neurological_stress_proxy"] <= 1.0
 
 # ─────────────────────────────────────────────────────────────────────────────
 # INJECT 30 DAYS OF SYNTHETIC DAILY LOGS (for Stages 7, 8, 9)
+# Uses the nested DailyLog schema from synthetic/generate.py
 # ─────────────────────────────────────────────────────────────────────────────
-banner("SYNTHETIC DATA — Injecting 30 days of daily logs", "\033[35m")
+banner("SYNTHETIC DATA — Injecting 30 days of daily logs (nested schema)", "\033[35m")
+
+from synthetic.generate import generate as synthetic_generate
 
 ensure_dir(DAILY_LOGS_DIR)
-random.seed(42)
-today = datetime.now(timezone.utc).date()
 
-for i in range(30):
-    day = today - timedelta(days=29 - i)
-    is_bad_week = 7 <= i <= 13  # deliberately bad week
+all_records = synthetic_generate(
+    output_dir=DAILY_LOGS_DIR,
+    user_id=USER_ID,
+    seed=42,
+    overwrite=True,
+)
 
-    mood = random.gauss(4.5 if is_bad_week else 6.8, 0.8)
-    fiber = random.gauss(8 if is_bad_week else 20, 2)
-    gl = random.gauss(22 if is_bad_week else 10, 2)
-    mdi = max(0.1, min(0.9, random.gauss(0.35 if is_bad_week else 0.65, 0.08)))
-    irs = max(0.1, min(0.9, random.gauss(0.65 if is_bad_week else 0.3, 0.08)))
-    dss = max(0.1, min(0.9, random.gauss(0.45 if is_bad_week else 0.75, 0.08)))
-    sleep_h = random.gauss(5.5 if is_bad_week else 7.2, 0.4)
-    sleep_debt = max(0, 7.5 - sleep_h)
-    neuro = max(0.1, min(0.9, random.gauss(0.6 if is_bad_week else 0.25, 0.07)))
-    cri = max(0.1, min(0.9, random.gauss(0.4 if is_bad_week else 0.8, 0.07)))
-    crash_prob = max(0.0, min(1.0, random.gauss(0.55 if is_bad_week else 0.25, 0.1)))
-    b12 = max(0.5, random.gauss(1.8 if i > 20 else 2.5, 0.2))
-
-    record = {
-        "date": str(day),
-        "food_items": ["masala dosa", "sambar"] if not is_bad_week else ["white rice", "pickle"],
-        "calories_kcal": random.gauss(1800 if is_bad_week else 2100, 150),
-        "fiber_g": max(0, fiber),
-        "tryptophan_mg": random.gauss(180, 30),
-        "glycemic_load": max(5, gl),
-        "fermented_food_consumed": not is_bad_week and random.random() > 0.5,
-        "late_meal": is_bad_week and random.random() > 0.4,
-        "mood_score": max(1, min(10, mood)),
-        "mood_label": "low" if mood < 5 else "positive",
-        "composite_wellbeing_score": max(0.1, min(0.9, mood / 10)),
-        "cognitive_state": "brain_fog" if is_bad_week else "clear",
-        "energy_level": "low" if is_bad_week else "moderate",
-        "anxiety_level": "moderate" if is_bad_week else "none",
-        "emoji_used": "\U0001f61f" if is_bad_week else "\U0001f642",
-        "microbiome_diversity_index": mdi,
-        "inflammation_risk_score": irs,
-        "inflammation_risk_level": "high" if irs > 0.5 else "low",
-        "digestion_stability_score": dss,
-        "scfa_production_proxy": "low" if fiber < 10 else "moderate",
-        "fermented_food_consumed": not is_bad_week,
-        "estimated_glucose_spike": "high" if gl > 15 else "moderate",
-        "fiber_attenuation_factor": max(0.3, min(0.9, fiber / 30)),
-        "energy_crash_probability": crash_prob,
-        "late_meal_penalty_applied": is_bad_week,
-        "tdee_percentage_consumed": random.gauss(80 if is_bad_week else 95, 10),
-        "meal_timing_risk": "high" if is_bad_week else "low",
-        "sleep_onset": "01:30" if is_bad_week else "23:15",
-        "sleep_hours": max(3, sleep_h),
-        "sleep_debt": sleep_debt,
-        "cumulative_debt_7d": sleep_debt * 3.5,
-        "circadian_regularity_index": cri,
-        "neurological_stress_proxy": neuro,
-        "sleep_stability_label": "poor" if neuro > 0.5 else "good",
-        "b12_mg": b12,
-        "diet_type": "vegetarian",
-    }
-    write_json(DAILY_LOGS_DIR / f"{str(day)}.json", record)
-
-print(f"  injected 30 synthetic daily log files into {DAILY_LOGS_DIR}")
+print(f"  injected {len(all_records)} synthetic daily log files (nested schema) into {DAILY_LOGS_DIR}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -302,13 +249,8 @@ print(f"  injected 30 synthetic daily log files into {DAILY_LOGS_DIR}")
 banner("STAGE 7 — Time-Series Pattern Analysis")
 
 from stage7.patterns import run as stage7_run
-from utils.storage import read_json
 
-all_records = sorted(
-    [read_json(f) for f in DAILY_LOGS_DIR.glob("*.json")],
-    key=lambda r: r.get("date", "")
-)
-
+# all_records already returned by synthetic_generate (chronological order)
 stage7 = stage7_run(all_records, skip_groq=True)
 ok("Days analyzed",            stage7["days_analyzed"])
 ok("Correlation pairs",        len(stage7["correlations"]))

@@ -14,6 +14,7 @@ from typing import TypedDict
 from scipy.stats import trim_mean
 
 from utils.config import BASELINES_DIR, DAILY_LOGS_DIR
+from utils.flatten import extract_flat_record
 from utils.storage import read_json, write_json
 
 
@@ -111,6 +112,7 @@ def run(user_id: str, daily_logs_dir: Path | None = None) -> BaselineOutput:
             f"Baseline requires 30+ days of data, got {len(records)}"
         )
 
+    records = [extract_flat_record(r) for r in records]
     last_14 = records[-14:]
 
     # --- Baseline metrics ---

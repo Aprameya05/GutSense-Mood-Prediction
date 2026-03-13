@@ -1,46 +1,209 @@
 {
   "date": "2026-02-22",
-  "food_items": [
-    "white rice",
-    "pickle"
+  "meals": [
+    {
+      "meal_id": "breakfast",
+      "meal_time": "07:30",
+      "stage1": {
+        "food_items": [
+          "white bread"
+        ],
+        "en_pred": "white bread",
+        "confidence": 0.8,
+        "source": "synthetic",
+        "timestamp": "2026-02-22T07:30:00+00:00"
+      },
+      "stage2": {
+        "items": [],
+        "totals": {
+          "calories_kcal": 536.55,
+          "carbs_g": 102.025,
+          "protein_g": 18.05,
+          "fat_g": 17.925,
+          "fiber_g": 1.65,
+          "tryptophan_mg": 44.1,
+          "omega3_mg": 17.275,
+          "iron_mg": 2.35,
+          "magnesium_mg": 57.325,
+          "b6_mg": 0.4025,
+          "b12_mcg": 0.0,
+          "zinc_mg": 1.55,
+          "glycemic_load": "high"
+        }
+      },
+      "stage4": {
+        "mood_score": -1,
+        "mood_label": "worried",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "low",
+        "anxiety_level": "moderate",
+        "emoji_used": "😟",
+        "hours_since_meal": 2.0,
+        "tryptophan_context_mg": 44.1
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 53.8,
+        "fiber_attenuation_factor": 0.7173,
+        "energy_crash_probability": 0.7,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "high"
+      }
+    },
+    {
+      "meal_id": "lunch",
+      "meal_time": "13:00",
+      "stage1": {
+        "food_items": [
+          "aloo sabzi",
+          "rice"
+        ],
+        "en_pred": "aloo sabzi",
+        "confidence": 0.6,
+        "source": "synthetic",
+        "timestamp": "2026-02-22T13:00:00+00:00"
+      },
+      "stage2": {
+        "items": [],
+        "totals": {
+          "calories_kcal": 858.48,
+          "carbs_g": 163.24,
+          "protein_g": 28.88,
+          "fat_g": 28.68,
+          "fiber_g": 2.64,
+          "tryptophan_mg": 70.56,
+          "omega3_mg": 27.64,
+          "iron_mg": 3.76,
+          "magnesium_mg": 91.72,
+          "b6_mg": 0.644,
+          "b12_mcg": 0.0,
+          "zinc_mg": 2.48,
+          "glycemic_load": "high"
+        }
+      },
+      "stage4": {
+        "mood_score": -1,
+        "mood_label": "worried",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "low",
+        "anxiety_level": "moderate",
+        "emoji_used": "😟",
+        "hours_since_meal": 2.0,
+        "tryptophan_context_mg": 70.56
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 53.8,
+        "fiber_attenuation_factor": 0.7173,
+        "energy_crash_probability": 0.7,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "high"
+      }
+    },
+    {
+      "meal_id": "dinner",
+      "meal_time": "21:30",
+      "stage1": {
+        "food_items": [
+          "white rice"
+        ],
+        "en_pred": "white rice",
+        "confidence": 0.56,
+        "source": "synthetic",
+        "timestamp": "2026-02-22T21:30:00+00:00"
+      },
+      "stage2": {
+        "items": [],
+        "totals": {
+          "calories_kcal": 751.17,
+          "carbs_g": 142.835,
+          "protein_g": 25.27,
+          "fat_g": 25.095,
+          "fiber_g": 2.31,
+          "tryptophan_mg": 61.74,
+          "omega3_mg": 24.185,
+          "iron_mg": 3.29,
+          "magnesium_mg": 80.255,
+          "b6_mg": 0.5635,
+          "b12_mcg": 0.0,
+          "zinc_mg": 2.17,
+          "glycemic_load": "high"
+        }
+      },
+      "stage4": {
+        "mood_score": -1,
+        "mood_label": "worried",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "low",
+        "anxiety_level": "moderate",
+        "emoji_used": "😟",
+        "hours_since_meal": 2.0,
+        "tryptophan_context_mg": 61.74
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 53.8,
+        "fiber_attenuation_factor": 0.7173,
+        "energy_crash_probability": 0.7,
+        "late_meal_penalty_applied": true,
+        "insulin_demand_proxy": "high"
+      }
+    }
   ],
-  "calories_kcal": 1782.8,
-  "fiber_g": 9.4,
-  "tryptophan_mg": 104.4,
-  "fat_g": 86.7,
-  "carbohydrates_g": 418.2,
-  "glycemic_load": "high",
-  "fermented_food_consumed": false,
+  "digestion": {
+    "bloating": "mild",
+    "stool_quality": 6,
+    "fermented_food_today": false,
+    "gas_discomfort": "mild",
+    "digestion_quality": "good"
+  },
+  "sleep": {
+    "sleep_onset": "00:43",
+    "wake_time": "07:00",
+    "sleep_hours": 5.6,
+    "sleep_debt": 1.9,
+    "cumulative_debt_7d": 8.66,
+    "circadian_regularity_index": 0.5707,
+    "neurological_stress_proxy": 0.5765,
+    "sleep_quality": "poor",
+    "sleep_stability": "moderate",
+    "night_awakenings": 2,
+    "caffeine_after_14h": true,
+    "screen_before_bed_min": 85
+  },
+  "daily_totals": {
+    "calories_kcal": 2146.2,
+    "carbs_g": 408.1,
+    "protein_g": 72.2,
+    "fat_g": 71.7,
+    "fiber_g": 6.6,
+    "glycemic_load": "high",
+    "tryptophan_mg": 176.4,
+    "omega3_mg": 69.1,
+    "iron_mg": 9.4,
+    "magnesium_mg": 229.3,
+    "b6_mg": 1.61,
+    "b12_mcg": 0.0,
+    "zinc_mg": 6.2
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.2996,
+    "inflammation_risk_score": 0.6126,
+    "inflammation_risk_level": "high",
+    "digestion_stability_score": 0.625,
+    "scfa_production_proxy": "low"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": -1.0,
+    "min_mood_score": -1,
+    "max_mood_score": -1,
+    "dominant_cognitive_state": "brain_fog"
+  },
+  "diet_type": "vegetarian",
   "late_meal": true,
-  "microbiome_diversity_index": 0.3385,
-  "inflammation_risk_score": 0.6154,
-  "inflammation_risk_level": "high",
-  "digestion_stability_score": 0.4859,
-  "scfa_production_proxy": "low",
-  "bloating": "moderate",
-  "stool_quality": 5,
-  "mood_score": -1,
-  "mood_label": "worried",
-  "cognitive_state": "brain_fog",
   "cognitive_penalty": -1.5,
-  "energy_level": "low",
-  "anxiety_level": "moderate",
-  "emoji_used": "😟",
-  "composite_wellbeing_score": 0.25,
-  "estimated_glucose_spike": "high",
-  "fiber_attenuation_factor": 0.7523,
-  "energy_crash_probability": 0.697,
-  "late_meal_penalty_applied": true,
-  "insulin_demand_proxy": "high",
-  "tdee_percentage_consumed": 90.8,
-  "sleep_onset": "23:52",
-  "sleep_hours": 5.02,
-  "sleep_debt": 2.48,
-  "cumulative_debt_7d": 8.55,
-  "cumulative_sleep_debt": 8.55,
-  "circadian_regularity_index": 0.4582,
-  "neurological_stress_proxy": 0.6633,
-  "sleep_stability": "low",
-  "sleep_stability_label": "low",
-  "diet_type": "vegetarian"
+  "estimated_glucose_spike": "high"
 }

@@ -26,6 +26,7 @@ from typing import Optional
 
 import numpy as np
 
+from utils.flatten import extract_flat_record
 from utils.groq_client import chat
 
 
@@ -356,6 +357,8 @@ def run(daily_records: list[dict], skip_groq: bool = False) -> dict:
         raise ValueError(
             f"Stage 7 requires at least 7 daily records, got {len(daily_records)}"
         )
+
+    daily_records = [extract_flat_record(r) for r in daily_records]
 
     correlations = _compute_correlations(daily_records)
     anomalies = _detect_anomalies(daily_records)

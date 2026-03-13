@@ -16,6 +16,8 @@ import statistics
 from datetime import datetime, timezone
 from typing import TypedDict
 
+from utils.flatten import extract_flat_record
+
 
 class RiskOutput(TypedDict):
     neurological_risk_level: str
@@ -165,6 +167,7 @@ def run(daily_records: list[dict], baselines: dict) -> RiskOutput:
     Returns:
         RiskOutput with risk level, active flags, and recommendations.
     """
+    daily_records = [extract_flat_record(r) for r in daily_records]
     flags: list[str] = []
 
     if _check_persistent_brain_fog(daily_records):
