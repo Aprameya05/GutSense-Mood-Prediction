@@ -1,0 +1,165 @@
+{
+  "date": "2026-02-12",
+  "meals": [
+    {
+      "meal_id": "lunch",
+      "meal_time": "12:00",
+      "stage1": {
+        "food_items": [
+          "idli",
+          "sambar",
+          "coconut chutney"
+        ],
+        "en_pred": "idli",
+        "confidence": 1.0,
+        "source": "synthetic",
+        "timestamp": "2026-03-13T18:43:25.678480+00:00"
+      },
+      "stage2": {
+        "items": [
+          {
+            "food_item": "idli",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 705.0333333333333,
+            "carbohydrates_g": 92.73333333333333,
+            "protein_g": 0.0,
+            "fat_g": 19.3,
+            "fiber_g": 10.133333333333333,
+            "glycemic_load": "low",
+            "tryptophan_mg": 76.3,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          },
+          {
+            "food_item": "sambar",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 705.0333333333333,
+            "carbohydrates_g": 92.73333333333333,
+            "protein_g": 0.0,
+            "fat_g": 19.3,
+            "fiber_g": 10.133333333333333,
+            "glycemic_load": "low",
+            "tryptophan_mg": 76.3,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          },
+          {
+            "food_item": "coconut chutney",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 705.0333333333333,
+            "carbohydrates_g": 92.73333333333333,
+            "protein_g": 0.0,
+            "fat_g": 19.3,
+            "fiber_g": 10.133333333333333,
+            "glycemic_load": "low",
+            "tryptophan_mg": 76.3,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          }
+        ],
+        "totals": {
+          "calories_kcal": 2115.1,
+          "carbs_g": 278.2,
+          "protein_g": 0.0,
+          "fat_g": 57.9,
+          "fiber_g": 30.4,
+          "glycemic_load": "low",
+          "tryptophan_mg": 228.9,
+          "omega3_mg": 0.0,
+          "iron_mg": 0.0,
+          "magnesium_mg": 0.0,
+          "b6_mg": 0.0,
+          "b12_mcg": 0.0,
+          "zinc_mg": 0.0
+        },
+        "timestamp": "2026-03-13T18:43:25.678636+00:00"
+      },
+      "stage4": {
+        "mood_score": 2,
+        "mood_label": "very_happy",
+        "cognitive_state": "sharp",
+        "cognitive_penalty": 0.0,
+        "energy_level": "high",
+        "anxiety_level": "none",
+        "emoji_used": "😄",
+        "tryptophan_context_mg": 228.9,
+        "hours_since_meal": 0.0,
+        "timestamp": "2026-03-13T18:43:25.678651+00:00"
+      },
+      "stage5": {
+        "estimated_glucose_spike": "mild",
+        "spike_delta_mg_dl": 25.0,
+        "fiber_attenuation_factor": 0.8076,
+        "energy_crash_probability": 0.142,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "low",
+        "timestamp": "2026-03-13T18:43:25.678662+00:00"
+      }
+    }
+  ],
+  "digestion": {
+    "bloating": "none",
+    "stool_quality": 3,
+    "gas_discomfort": "none",
+    "digestion_quality": "good",
+    "fermented_food_today": true
+  },
+  "sleep": {
+    "sleep_onset": "22:45",
+    "wake_time": "06:30",
+    "sleep_hours": 7.79,
+    "sleep_debt": 0.0,
+    "cumulative_debt_7d": 0.0,
+    "circadian_regularity_index": 0.7806,
+    "neurological_stress_proxy": 0.2683,
+    "sleep_quality": "good",
+    "sleep_stability": "high",
+    "night_awakenings": 0,
+    "caffeine_after_14h": false,
+    "screen_before_bed_min": 0
+  },
+  "daily_totals": {
+    "calories_kcal": 2115.1,
+    "carbs_g": 278.2,
+    "protein_g": 0.0,
+    "fat_g": 57.9,
+    "fiber_g": 30.4,
+    "glycemic_load": "low",
+    "tryptophan_mg": 228.9,
+    "omega3_mg": 0.0,
+    "iron_mg": 0.0,
+    "magnesium_mg": 0.0,
+    "b6_mg": 0.0,
+    "b12_mcg": 0.0,
+    "zinc_mg": 0.0
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.6499,
+    "inflammation_risk_score": 0.2974,
+    "inflammation_risk_level": "low",
+    "digestion_stability_score": 0.8044,
+    "scfa_production_proxy": "high"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": 2.0,
+    "min_mood_score": 2.0,
+    "max_mood_score": 2.0,
+    "dominant_cognitive_state": "sharp"
+  },
+  "diet_type": "vegetarian"
+}

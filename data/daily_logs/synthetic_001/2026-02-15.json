@@ -1,0 +1,146 @@
+{
+  "date": "2026-02-15",
+  "meals": [
+    {
+      "meal_id": "lunch",
+      "meal_time": "12:00",
+      "stage1": {
+        "food_items": [
+          "pongal",
+          "sambar"
+        ],
+        "en_pred": "pongal",
+        "confidence": 1.0,
+        "source": "synthetic",
+        "timestamp": "2026-03-13T18:43:25.688204+00:00"
+      },
+      "stage2": {
+        "items": [
+          {
+            "food_item": "pongal",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 1062.9,
+            "carbohydrates_g": 153.45,
+            "protein_g": 0.0,
+            "fat_g": 32.1,
+            "fiber_g": 13.55,
+            "glycemic_load": "low",
+            "tryptophan_mg": 114.1,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          },
+          {
+            "food_item": "sambar",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 1062.9,
+            "carbohydrates_g": 153.45,
+            "protein_g": 0.0,
+            "fat_g": 32.1,
+            "fiber_g": 13.55,
+            "glycemic_load": "low",
+            "tryptophan_mg": 114.1,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          }
+        ],
+        "totals": {
+          "calories_kcal": 2125.8,
+          "carbs_g": 306.9,
+          "protein_g": 0.0,
+          "fat_g": 64.2,
+          "fiber_g": 27.1,
+          "glycemic_load": "low",
+          "tryptophan_mg": 228.2,
+          "omega3_mg": 0.0,
+          "iron_mg": 0.0,
+          "magnesium_mg": 0.0,
+          "b6_mg": 0.0,
+          "b12_mcg": 0.0,
+          "zinc_mg": 0.0
+        },
+        "timestamp": "2026-03-13T18:43:25.688227+00:00"
+      },
+      "stage4": {
+        "mood_score": 2,
+        "mood_label": "very_happy",
+        "cognitive_state": "clear",
+        "cognitive_penalty": 0.0,
+        "energy_level": "high",
+        "anxiety_level": "none",
+        "emoji_used": "😄",
+        "tryptophan_context_mg": 228.2,
+        "hours_since_meal": 0.0,
+        "timestamp": "2026-03-13T18:43:25.688231+00:00"
+      },
+      "stage5": {
+        "estimated_glucose_spike": "mild",
+        "spike_delta_mg_dl": 25.0,
+        "fiber_attenuation_factor": 0.7997,
+        "energy_crash_probability": 0.207,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "low",
+        "timestamp": "2026-03-13T18:43:25.688234+00:00"
+      }
+    }
+  ],
+  "digestion": {
+    "bloating": "none",
+    "stool_quality": 4,
+    "gas_discomfort": "none",
+    "digestion_quality": "good",
+    "fermented_food_today": false
+  },
+  "sleep": {
+    "sleep_onset": "23:07",
+    "wake_time": "06:30",
+    "sleep_hours": 7.08,
+    "sleep_debt": 0.42,
+    "cumulative_debt_7d": 0.84,
+    "circadian_regularity_index": 0.8327,
+    "neurological_stress_proxy": 0.3234,
+    "sleep_quality": "good",
+    "sleep_stability": "high",
+    "night_awakenings": 0,
+    "caffeine_after_14h": false,
+    "screen_before_bed_min": 0
+  },
+  "daily_totals": {
+    "calories_kcal": 2125.8,
+    "carbs_g": 306.9,
+    "protein_g": 0.0,
+    "fat_g": 64.2,
+    "fiber_g": 27.1,
+    "glycemic_load": "low",
+    "tryptophan_mg": 228.2,
+    "omega3_mg": 0.0,
+    "iron_mg": 0.0,
+    "magnesium_mg": 0.0,
+    "b6_mg": 0.0,
+    "b12_mcg": 0.0,
+    "zinc_mg": 0.0
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.662,
+    "inflammation_risk_score": 0.3223,
+    "inflammation_risk_level": "moderate",
+    "digestion_stability_score": 0.8636,
+    "scfa_production_proxy": "high"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": 2.0,
+    "min_mood_score": 2.0,
+    "max_mood_score": 2.0,
+    "dominant_cognitive_state": "clear"
+  },
+  "diet_type": "vegetarian"
+}

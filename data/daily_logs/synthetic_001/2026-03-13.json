@@ -1,0 +1,219 @@
+{
+  "date": "2026-03-13",
+  "meals": [
+    {
+      "meal_id": "lunch",
+      "meal_time": "12:00",
+      "stage1": {
+        "food_items": [
+          "chicken curry",
+          "jeera rice"
+        ],
+        "en_pred": "chicken curry",
+        "confidence": 1.0,
+        "source": "synthetic",
+        "timestamp": "2026-03-13T15:21:20.170433+00:00"
+      },
+      "stage2": {
+        "items": [
+          {
+            "food_item": "chicken curry",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 372.5,
+            "carbohydrates_g": 0.0,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 2.4,
+            "glycemic_load": "high",
+            "tryptophan_mg": 192.5,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          },
+          {
+            "food_item": "jeera rice",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 372.5,
+            "carbohydrates_g": 0.0,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 2.4,
+            "glycemic_load": "high",
+            "tryptophan_mg": 192.5,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          }
+        ],
+        "totals": {
+          "calories_kcal": 745.0,
+          "carbs_g": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "fiber_g": 4.8,
+          "glycemic_load": "high",
+          "tryptophan_mg": 385.0,
+          "omega3_mg": 0.0,
+          "iron_mg": 0.0,
+          "magnesium_mg": 0.0,
+          "b6_mg": 0.0,
+          "b12_mcg": 0.0,
+          "zinc_mg": 0.0
+        },
+        "timestamp": "2026-03-13T15:21:20.170433+00:00"
+      },
+      "stage4": {
+        "mood_score": 0,
+        "mood_label": "neutral",
+        "cognitive_state": "clear",
+        "cognitive_penalty": 0.0,
+        "energy_level": "moderate",
+        "anxiety_level": "none",
+        "emoji_used": null,
+        "tryptophan_context_mg": 385.0,
+        "hours_since_meal": 0.0,
+        "timestamp": "2026-03-13T15:21:20.170433+00:00"
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 72.3,
+        "fiber_attenuation_factor": 0.964,
+        "energy_crash_probability": 0.75,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "high",
+        "timestamp": "2026-03-13T15:21:20.170433+00:00"
+      }
+    },
+    {
+      "meal_id": "lunch",
+      "meal_time": "18:48",
+      "stage1": {
+        "food_items": [
+          "masala dosa",
+          "sambar"
+        ],
+        "en_pred": "dosa",
+        "confidence": 0.85,
+        "source": "groq",
+        "timestamp": "2026-03-13T12:30:00+00:00"
+      },
+      "stage2": {
+        "items": [
+          {
+            "food_item": "masala dosa",
+            "portion_g": 250.0,
+            "source_db": "IFCT_2017",
+            "calories_kcal": 300.0,
+            "carbohydrates_g": 40.0,
+            "protein_g": 8.0,
+            "fat_g": 12.0,
+            "fiber_g": 3.0,
+            "glycemic_load": "medium",
+            "tryptophan_mg": 25.0,
+            "omega3_mg": 50.0,
+            "iron_mg": 2.0,
+            "magnesium_mg": 20.0,
+            "vitamin_b6_mg": 0.3,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 1.0
+          }
+        ],
+        "totals": {
+          "calories_kcal": 300.0,
+          "carbs_g": 40.0,
+          "protein_g": 8.0,
+          "fat_g": 12.0,
+          "fiber_g": 3.0,
+          "glycemic_load": "medium",
+          "tryptophan_mg": 25.0,
+          "omega3_mg": 50.0,
+          "iron_mg": 2.0,
+          "magnesium_mg": 20.0,
+          "b6_mg": 0.3,
+          "b12_mcg": 0.0,
+          "zinc_mg": 1.0
+        },
+        "timestamp": "2026-03-13T12:30:00+00:00"
+      },
+      "stage4": {
+        "mood_score": 1.0,
+        "mood_label": "happy",
+        "cognitive_state": "clear",
+        "cognitive_penalty": 0.0,
+        "energy_level": "moderate",
+        "anxiety_level": "none",
+        "emoji_used": "🙂",
+        "tryptophan_context_mg": 25.0,
+        "hours_since_meal": 0.0,
+        "timestamp": "2026-03-13T12:30:00+00:00"
+      },
+      "stage5": {
+        "estimated_glucose_spike": "moderate",
+        "spike_delta_mg_dl": 45.0,
+        "fiber_attenuation_factor": 0.95,
+        "energy_crash_probability": 0.3,
+        "late_meal_penalty_applied": false,
+        "insulin_demand_proxy": "moderate",
+        "timestamp": "2026-03-13T12:30:00+00:00"
+      }
+    }
+  ],
+  "digestion": {
+    "bloating": "mild",
+    "stool_quality": 4,
+    "gas_discomfort": "none",
+    "digestion_quality": "good",
+    "fermented_food_today": true
+  },
+  "sleep": {
+    "sleep_onset": "23:30",
+    "wake_time": "06:15",
+    "sleep_hours": 6.75,
+    "sleep_debt": 0.75,
+    "cumulative_debt_7d": 16.8,
+    "circadian_regularity_index": 0.3631,
+    "neurological_stress_proxy": 0.6,
+    "sleep_quality": "fair",
+    "sleep_stability": "low",
+    "night_awakenings": 1,
+    "caffeine_after_14h": false,
+    "screen_before_bed_min": 45
+  },
+  "daily_totals": {
+    "calories_kcal": 1045.0,
+    "carbs_g": 40.0,
+    "protein_g": 8.0,
+    "fat_g": 12.0,
+    "fiber_g": 7.8,
+    "glycemic_load": "high",
+    "tryptophan_mg": 410.0,
+    "omega3_mg": 50.0,
+    "iron_mg": 2.0,
+    "magnesium_mg": 20.0,
+    "b6_mg": 0.3,
+    "b12_mcg": 0.0,
+    "zinc_mg": 1.0
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.33,
+    "inflammation_risk_score": 0.42,
+    "inflammation_risk_level": "moderate",
+    "digestion_stability_score": 0.95,
+    "scfa_production_proxy": "low"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": 0.5,
+    "min_mood_score": 0.0,
+    "max_mood_score": 1.0,
+    "dominant_cognitive_state": "clear"
+  },
+  "diet_type": "vegetarian"
+}

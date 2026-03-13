@@ -1,0 +1,146 @@
+{
+  "date": "2026-02-27",
+  "meals": [
+    {
+      "meal_id": "lunch",
+      "meal_time": "12:00",
+      "stage1": {
+        "food_items": [
+          "aloo sabzi",
+          "rice"
+        ],
+        "en_pred": "aloo sabzi",
+        "confidence": 1.0,
+        "source": "synthetic",
+        "timestamp": "2026-03-13T18:43:25.717653+00:00"
+      },
+      "stage2": {
+        "items": [
+          {
+            "food_item": "aloo sabzi",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 963.2,
+            "carbohydrates_g": 190.05,
+            "protein_g": 0.0,
+            "fat_g": 31.45,
+            "fiber_g": 4.15,
+            "glycemic_load": "medium",
+            "tryptophan_mg": 100.45,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          },
+          {
+            "food_item": "rice",
+            "portion_g": 250.0,
+            "source_db": "groq_estimate",
+            "calories_kcal": 963.2,
+            "carbohydrates_g": 190.05,
+            "protein_g": 0.0,
+            "fat_g": 31.45,
+            "fiber_g": 4.15,
+            "glycemic_load": "medium",
+            "tryptophan_mg": 100.45,
+            "omega3_mg": 0.0,
+            "iron_mg": 0.0,
+            "magnesium_mg": 0.0,
+            "vitamin_b6_mg": 0.0,
+            "vitamin_b12_ug": 0.0,
+            "zinc_mg": 0.0
+          }
+        ],
+        "totals": {
+          "calories_kcal": 1926.4,
+          "carbs_g": 380.1,
+          "protein_g": 0.0,
+          "fat_g": 62.9,
+          "fiber_g": 8.3,
+          "glycemic_load": "medium",
+          "tryptophan_mg": 200.9,
+          "omega3_mg": 0.0,
+          "iron_mg": 0.0,
+          "magnesium_mg": 0.0,
+          "b6_mg": 0.0,
+          "b12_mcg": 0.0,
+          "zinc_mg": 0.0
+        },
+        "timestamp": "2026-03-13T18:43:25.717686+00:00"
+      },
+      "stage4": {
+        "mood_score": -1,
+        "mood_label": "worried",
+        "cognitive_state": "brain_fog",
+        "cognitive_penalty": -1.5,
+        "energy_level": "low",
+        "anxiety_level": "moderate",
+        "emoji_used": "😟",
+        "tryptophan_context_mg": 200.9,
+        "hours_since_meal": 0.0,
+        "timestamp": "2026-03-13T18:43:25.717692+00:00"
+      },
+      "stage5": {
+        "estimated_glucose_spike": "high",
+        "spike_delta_mg_dl": 25.0,
+        "fiber_attenuation_factor": 0.7183,
+        "energy_crash_probability": 0.736,
+        "late_meal_penalty_applied": true,
+        "insulin_demand_proxy": "high",
+        "timestamp": "2026-03-13T18:43:25.717698+00:00"
+      }
+    }
+  ],
+  "digestion": {
+    "bloating": "moderate",
+    "stool_quality": 6,
+    "gas_discomfort": "none",
+    "digestion_quality": "good",
+    "fermented_food_today": false
+  },
+  "sleep": {
+    "sleep_onset": "00:26",
+    "wake_time": "06:30",
+    "sleep_hours": 6.21,
+    "sleep_debt": 1.29,
+    "cumulative_debt_7d": 11.62,
+    "circadian_regularity_index": 0.3378,
+    "neurological_stress_proxy": 0.6254,
+    "sleep_quality": "good",
+    "sleep_stability": "low",
+    "night_awakenings": 0,
+    "caffeine_after_14h": false,
+    "screen_before_bed_min": 0
+  },
+  "daily_totals": {
+    "calories_kcal": 1926.4,
+    "carbs_g": 380.1,
+    "protein_g": 0.0,
+    "fat_g": 62.9,
+    "fiber_g": 8.3,
+    "glycemic_load": "medium",
+    "tryptophan_mg": 200.9,
+    "omega3_mg": 0.0,
+    "iron_mg": 0.0,
+    "magnesium_mg": 0.0,
+    "b6_mg": 0.0,
+    "b12_mcg": 0.0,
+    "zinc_mg": 0.0
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.3344,
+    "inflammation_risk_score": 0.6325,
+    "inflammation_risk_level": "high",
+    "digestion_stability_score": 0.5209,
+    "scfa_production_proxy": "low"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": -1.0,
+    "min_mood_score": -1.0,
+    "max_mood_score": -1.0,
+    "dominant_cognitive_state": "brain_fog"
+  },
+  "diet_type": "vegetarian"
+}

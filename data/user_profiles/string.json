@@ -1,0 +1,24 @@
+{
+  "user_id": "string",
+  "age": 1,
+  "sex": "male",
+  "height_cm": 1.0,
+  "weight_kg": 1.0,
+  "diet_type": "vegetarian",
+  "activity_level": "sedentary",
+  "sleep_schedule": "string",
+  "known_conditions": [
+    "string"
+  ],
+  "supplements": [
+    "string"
+  ],
+  "medications": [
+    "string"
+  ],
+  "bmr_kcal": 16.2,
+  "tdee_kcal": 19.5,
+  "activity_multiplier": 1.2,
+  "baseline_established": true,
+  "timestamp": "2026-03-13T18:54:05.118719+00:00"
+}

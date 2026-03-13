@@ -1,0 +1,41 @@
+{
+  "date": "string",
+  "meals": [],
+  "digestion": {
+    "bloating": "none",
+    "stool_quality": 1,
+    "gas_discomfort": "none",
+    "digestion_quality": "poor",
+    "fermented_food_today": true
+  },
+  "sleep": null,
+  "daily_totals": {
+    "calories_kcal": 0.0,
+    "carbs_g": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "fiber_g": 0.0,
+    "glycemic_load": "unknown",
+    "tryptophan_mg": 0.0,
+    "omega3_mg": 0.0,
+    "iron_mg": 0.0,
+    "magnesium_mg": 0.0,
+    "b6_mg": 0.0,
+    "b12_mcg": 0.0,
+    "zinc_mg": 0.0
+  },
+  "daily_gut": {
+    "microbiome_diversity_index": 0.28,
+    "inflammation_risk_score": 0.42,
+    "inflammation_risk_level": "moderate",
+    "digestion_stability_score": 0.3,
+    "scfa_production_proxy": "low"
+  },
+  "daily_mood_summary": {
+    "avg_mood_score": 0.0,
+    "min_mood_score": 0.0,
+    "max_mood_score": 0.0,
+    "dominant_cognitive_state": "clear"
+  },
+  "diet_type": "vegetarian"
+}

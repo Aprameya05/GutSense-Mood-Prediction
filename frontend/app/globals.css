@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Bebas+Neue&display=swap');
+
+:root {
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --blue: #0EA5E9;
+  --green: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --text: #0F172A;
+  --muted: #64748B;
+  --organ-gold: #FBBF24;
+  --organ-pink: #F87171;
+  --organ-violet: #818CF8;
+
+  --font-instrument: 'Instrument Serif', Georgia, serif;
+  --font-ibm-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-bebas: 'Bebas Neue', Impact, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-jakarta);
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Graph-paper background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(226, 232, 240, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226, 232, 240, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* Hexagonal cell pattern */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle at 1px 1px, rgba(226, 232, 240, 0.04) 1px, transparent 0);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Utility classes for the design system */
+.font-instrument { font-family: var(--font-instrument); }
+.font-ibm { font-family: var(--font-ibm-mono); }
+.font-jakarta { font-family: var(--font-jakarta); }
+.font-bebas { font-family: var(--font-bebas); }
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+}
+
+/* Shimmer effect */
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.shimmer-hover:hover::after {
+  opacity: 1;
+  animation: shimmer 1.5s linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Green glow for healthy metrics */
+.glow-green {
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Blue glow */
+.glow-blue {
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.3);
+}
+
+/* Scan beam animation for meal upload */
+@keyframes scan-beam {
+  0% { top: 0; opacity: 1; }
+  100% { top: 100%; opacity: 0.8; }
+}
+
+/* Range input - journey timeline scrubber */
+.journey-scrubber input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.journey-scrubber input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Petri dish bacteria drift */
+@keyframes petri-drift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(4px, -6px); }
+  50% { transform: translate(-5px, 3px); }
+  75% { transform: translate(3px, 5px); }
+}
