@@ -1,0 +1,18 @@
+{
+  "user_id": "69b400aeba16ea3502853946",
+  "age": 20,
+  "sex": "male",
+  "height_cm": 190.0,
+  "weight_kg": 85.0,
+  "diet_type": "vegetarian",
+  "activity_level": "moderate",
+  "sleep_schedule": "23:00-07:00",
+  "known_conditions": [],
+  "supplements": [],
+  "medications": [],
+  "bmr_kcal": 1942.5,
+  "tdee_kcal": 3010.9,
+  "activity_multiplier": 1.55,
+  "baseline_established": true,
+  "timestamp": "2026-03-13T14:41:09.813334+00:00"
+}
