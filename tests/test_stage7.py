@@ -419,7 +419,7 @@ def test_run_days_analyzed():
 def test_run_skip_groq():
     records = _make_standard_records(30)
     result = run(records, skip_groq=True)
-    assert result["groq_summary"] == "Groq summarization skipped."
+    assert result["groq_summary"].startswith("Groq summarization skipped.")
 
 
 def test_run_detects_strong_gl_mood_correlation():

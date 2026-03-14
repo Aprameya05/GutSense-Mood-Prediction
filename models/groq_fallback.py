@@ -7,8 +7,10 @@ import os
 from groq import Groq
 from PIL import Image
 
-# Best free-tier Groq vision model as of 2025
-GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
+# Vision model — override via GROQ_VISION_MODEL env var without code changes
+GROQ_VISION_MODEL = os.environ.get(
+    "GROQ_VISION_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct"
+)
 # Max dimension for the image sent to Groq (larger = more detail, but slower)
 _MAX_IMAGE_DIM = 1120
 

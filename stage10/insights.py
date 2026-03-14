@@ -8,6 +8,7 @@ import json
 from datetime import datetime, timezone
 from typing import TypedDict
 
+from utils.config import GROQ_CHAT_MODEL
 from utils.groq_client import chat
 
 
@@ -109,13 +110,129 @@ def _summarize_level(summary: dict, key: str, fallback: str = "unknown") -> str:
     return fallback
 
 
-_PLACEHOLDER_INSIGHTS = [
-    "Consider increasing fiber intake to support gut microbiome diversity.",
-    "Late-night meals appear to correlate with next-day mood dips.",
-    "Consistent sleep onset times may improve circadian regularity.",
-    "Fermented foods on days consumed show improved digestion stability.",
-    "Adequate tryptophan-rich foods may support mood via serotonin pathway.",
-]
+def _generate_fallback_insights(pipeline_summary: dict) -> list[str]:
+    """
+    Derive data-driven insights directly from pipeline_summary when Groq is skipped.
+
+    Reads the same keys that _build_user_prompt() uses so every insight is
+    specific to *this* user's actual stage outputs, not a generic template.
+    Handles both nested (API) and flatter (CLI) pipeline_summary shapes.
+    """
+    insights: list[str] = []
+
+    # ── Correlations (Stage 7): use significant flag when present, else |r|>0.3 ──
+    for corr in pipeline_summary.get("correlations", []):
+        r = corr.get("r", 0.0)
+        is_notable = corr.get("significant", abs(r) > 0.3)
+        if not is_notable:
+            continue
+        pair = corr.get("pair", "")
+        direction = "positively" if r > 0 else "negatively"
+        insights.append(
+            f"Over the analysis window, {pair.replace(' <-> ', ' and ')} "
+            f"are {direction} correlated (r={r:.2f}). "
+            "This informational pattern may be worth monitoring."
+        )
+        if len(insights) >= 2:
+            break
+
+    # ── Neurological risk level (Stage 9) ────────────────────────────────────
+    risk = pipeline_summary.get("risk", {})
+    risk_level = risk.get("neurological_risk_level",
+                          _summarize_level(pipeline_summary, "neurological_risk_level", ""))
+    if risk_level in ("mild", "moderate", "elevated"):
+        active_flags = risk.get("active_flags", [])
+        flag_str = f" ({', '.join(active_flags[:2])})" if active_flags else ""
+        insights.append(
+            f"Neurological risk assessment: {risk_level}{flag_str}. "
+            "Review sleep consistency and mood logs for contributing patterns."
+        )
+
+    # ── Gut inflammation (Stage 3): score or level string ────────────────────
+    gut = pipeline_summary.get("gut", {})
+    irs = gut.get("inflammation_risk_score")
+    if irs is None:
+        irs_raw = _summarize_level(pipeline_summary, "inflammation_risk_score", "")
+        try:
+            irs = float(irs_raw)
+        except (ValueError, TypeError):
+            irs = None
+    if irs is not None:
+        if irs > 0.6:
+            insights.append(
+                f"Inflammation risk score is {irs:.2f} (elevated). "
+                "Reducing processed carbohydrates and increasing omega-3 sources may help."
+            )
+        elif irs < 0.3:
+            insights.append(
+                f"Inflammation risk score is {irs:.2f} (low), "
+                "consistent with current dietary patterns."
+            )
+    else:
+        # Fallback: level string (e.g. "inflammation_risk_level": "moderate")
+        irs_level = gut.get("inflammation_risk_level",
+                            _summarize_level(pipeline_summary, "inflammation_risk_level", ""))
+        if irs_level in ("moderate", "high", "elevated"):
+            insights.append(
+                f"Gut inflammation proxy is {irs_level}. "
+                "Increasing dietary fiber and fermented foods may support microbiome balance."
+            )
+        elif irs_level == "low":
+            insights.append(
+                "Gut inflammation proxy is low, consistent with current dietary patterns."
+            )
+
+    # ── Sleep quality / debt (Stage 6) ───────────────────────────────────────
+    sleep = pipeline_summary.get("sleep", {})
+    debt = sleep.get("cumulative_debt_7d")
+    if debt is None:
+        debt_raw = _summarize_level(pipeline_summary, "cumulative_debt_7d", "")
+        try:
+            debt = float(debt_raw)
+        except (ValueError, TypeError):
+            debt = None
+    if debt is not None and debt > 5:
+        insights.append(
+            f"7-day cumulative sleep debt is {debt:.1f} hours. "
+            "Consistent sleep timing may reduce neurological stress signals."
+        )
+    else:
+        # Fallback: stability string
+        stab = sleep.get("sleep_stability",
+                         _summarize_level(pipeline_summary, "sleep_stability", ""))
+        if stab in ("low", "poor"):
+            insights.append(
+                f"Sleep stability is reported as {stab}. "
+                "Consistent sleep and wake times support circadian regularity."
+            )
+
+    # ── Metabolic spike (Stage 5) ─────────────────────────────────────────────
+    metabolic = pipeline_summary.get("metabolic", {})
+    spike = metabolic.get("estimated_glucose_spike",
+                          _summarize_level(pipeline_summary, "estimated_glucose_spike", ""))
+    if spike in ("high", "moderate"):
+        insights.append(
+            f"Estimated glucose spike is {spike}. "
+            "Including higher-fiber foods and reducing refined carbohydrates may attenuate glycemic response."
+        )
+
+    # ── Fiber intake (Stage 2 nutrition) ─────────────────────────────────────
+    nutrition = pipeline_summary.get("nutrition_totals", {})
+    fiber = nutrition.get("fiber_g")
+    if fiber is not None and fiber < 15:
+        insights.append(
+            f"Average fiber intake ({fiber:.1f} g) is below recommended levels. "
+            "Legumes, whole grains, and vegetables support gut microbiome diversity."
+        )
+
+    # ── Final fallback if pipeline_summary had no usable data ────────────────
+    if not insights:
+        insights.append(
+            "Insufficient pattern data for personalized observations. "
+            "Continue logging meals, mood, and sleep to enable correlation analysis."
+        )
+
+    return insights[:5]
 
 
 # ─── Public API ───────────────────────────────────────────────────────────────
@@ -133,7 +250,7 @@ def run(pipeline_summary: dict, skip_groq: bool = False) -> InsightOutput:
         InsightOutput with categorized insights and disclaimer.
     """
     if skip_groq:
-        insights = _PLACEHOLDER_INSIGHTS[:4]
+        insights = _generate_fallback_insights(pipeline_summary)
     else:
         messages = [
             {"role": "system", "content": _SYSTEM_PROMPT},
@@ -166,6 +283,6 @@ def run(pipeline_summary: dict, skip_groq: bool = False) -> InsightOutput:
         "insights_count": len(insights),
         "insights": insights,
         "disclaimer": _DISCLAIMER,
-        "generated_by": "groq/llama-4-scout-17b",
+        "generated_by": f"groq/{GROQ_CHAT_MODEL.split('/')[-1]}",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }

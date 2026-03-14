@@ -1,185 +1,174 @@
-# CLAUDE.md — Gut-Mood Pipeline Build Instructions
+# CLAUDE.md — GutSense Developer & AI Assistant Guide
 
 ## Project Overview
-This is a **10-stage AI pipeline** that analyzes relationships between food intake, gut health proxies, metabolic signals, and neurological indicators. The full specification is in `SPEC.md`. Read it before building anything.
 
-## What Already Exists (DO NOT REBUILD)
-Stage 1 (Food Identification) is **fully implemented**. The existing structure:
+**GutSense** is a **10-stage AI pipeline** (Stages 0–10) that links meal images, nutrition, gut proxies, mood, metabolism, sleep, 30-day patterns, baselines, risk flags, and Groq-generated insights. Full formulas and citations live in **`SPEC.md`**. Marketing-facing copy and quick start live in **`README.md`**.
+
+- **Positioning**: Personalized nutrition–mood–neurology **observations only** — never diagnostic; disclaimer on all user-facing outputs.
+- **Runtime**: Local Python 3.10+; optional **FastAPI** HTTP layer for apps/websites.
+
+---
+
+## Website / API Layer (Backend)
+
+The **web-facing backend** is **`api.py`** (FastAPI), not Streamlit.
+
+| Topic | Detail |
+|-------|--------|
+| **Run locally** | `uvicorn api:app --host 0.0.0.0 --port 8000 --reload` |
+| **Title** | GutSense API — 10-stage food–gut–mood pipeline |
+| **CORS** | Currently open (`allow_origins=["*"]`) — tighten for production |
+| **Auth** | Register / login-style flows writing Stage 0 profiles under `data/user_profiles/` |
+| **Pipeline** | Upload meal image + form/body fields → same stages as CLI; daily logs via `utils/daily_log_manager.py` |
+| **Schemas** | Request/response models in **`utils/schemas.py`** (align with SPEC stage I/O) |
+| **Groq off** | If `GROQ_API_KEY` unset, API can run in placeholder/skip mode (`_skip_groq`) |
+
+Any **frontend** (web app, mobile) should call these endpoints and pass **user-supplied** profile, meal, mood, digestion, and sleep fields — do not hardcode demo users or fixed payloads in production paths.
+
+---
+
+## Entry Points
+
+| File | Role |
+|------|------|
+| **`pipeline.py`** | Stage 1 only: `analyze_food_image(path)` → food_items, confidence, source |
+| **`run_pipeline.py`** | **Full CLI**: Stage 0 load → 1 → 2 → 3,4,5 → 6 (optional) → daily log → 7–10 when enough history |
+| **`api.py`** | **HTTP API** for registration, meals, mood, sleep, insights, baselines, risk, history |
+| **`e2e_test.py`** | End-to-end test without real image/API (stages wired) |
+| **`synthetic/generate.py`** | 30-day synthetic logs + Stages 7–10 verification |
+
+---
+
+## Implemented Layout (Do Not “Rebuild” Stage 1 From Scratch)
 
 ```
 models/
-  food_classifier.py      # EfficientNet-B2 (nateraw/food), lazy-loaded
-  groq_fallback.py        # Groq Vision API (llama-4-scout-17b-16e-instruct)
+  food_classifier.py       # EfficientNet-B2 (nateraw/food), lazy-loaded
+  groq_fallback.py         # Groq Vision (Llama 4 Scout class)
+stage0/profile.py          # BMR/TDEE, JSON profiles
 stage1/
-  pipeline.py             # Orchestrator: parallel inference, fuzzy match, fallback
-  mismatch_logger.py      # Thread-safe JSONL mismatch logger
-logs/
-  mismatch_log.jsonl      # Auto-created, gitignored
-pipeline.py               # Entry point: opens image → stage1.pipeline.run()
+  pipeline.py              # Parallel EN + Groq Vision, fuzzy match, fallback
+  mismatch_logger.py       # logs/mismatch_log.jsonl (gitignored)
+stage2/nutrition.py        # IFCT → USDA → INDB → Groq; 13 nutrients; cache
+stage3/gut_proxy.py        # MDI, IRS, DSS
+stage4/mood.py             # Emoji → score, cognitive context
+stage5/metabolic.py        # GL spike, fiber, crash, late meal
+stage6/sleep.py            # Debt, CRI, neurological stress proxy
+stage7/patterns.py         # 30-day correlations, z-scores, Groq summary
+stage8/baseline.py         # Trimmed stats, CV stability
+stage9/risk.py             # 8 signals, duration thresholds
+stage10/insights.py        # Groq insights + disclaimer
+utils/
+  config.py                # Env paths + keys
+  groq_client.py           # Backoff, cache
+  storage.py               # JSON / SQLite helpers
+  validators.py            # Stage inputs
+  schemas.py               # API Pydantic models
+  daily_log_manager.py     # Daily log merge / persistence for API
+logs/mismatch_log.jsonl
+data/
+  user_profiles/{id}.json
+  nutrition_db/            # IFCT, INDB (per 100g edible)
+  nutrition_cache.json
+  daily_logs/YYYY-MM-DD.json
+  baselines/
+  synthetic/
+tests/test_stage0.py … test_stage10.py   # ~311 tests
 ```
 
-Stage 1 output schema (this is the INPUT to Stage 2):
-```json
-{
-  "food_items": ["masala dosa", "sambar", "coconut chutney"],
-  "en_pred": "fried_rice",
-  "confidence": 0.28,
-  "source": "groq"
-}
-```
+Stage 1 **output shape** (input to Stage 2) includes at least: `food_items`, `en_pred`, `confidence`, `source`, plus `timestamp` when run from CLI/API.
+
+---
 
 ## Tech Stack
-- **Language**: Python 3.10+
-- **API**: Groq free tier (llama-4-scout-17b-16e-instruct). Key via `GROQ_API_KEY` env var.
-- **Nutritional DBs**: IFCT 2017 (local CSV/JSON), USDA FoodData Central (REST API at api.nal.usda.gov/fdc/v1/), INDB (local CSV/JSON)
-- **Storage**: Local JSON files + SQLite for user profiles and 30-day accumulation
-- **Frontend**: Streamlit (later — do NOT build UI until all stages work in CLI)
-- **No Docker, no cloud, no overengineering.** This runs locally.
 
-## Build Order
-Build stages sequentially. Each stage is a separate module. Test each stage independently before connecting.
+- **Python 3.10+**
+- **Groq**: Vision + text (`GROQ_API_KEY`)
+- **USDA FDC** (optional): `FDC_API_KEY`
+- **Local DBs**: IFCT 2017, INDB JSON/CSV under `data/nutrition_db/`
+- **Storage**: JSON daily logs + user profiles; SQLite where `utils/storage` uses it
+- **HTTP**: FastAPI + uvicorn (`api.py`)
+- **Tests**: pytest (`python -m pytest tests/ -v`), plus `python e2e_test.py`
 
-### Stage 0 — User Baseline Profile (`stage0/`)
-- File: `stage0/profile.py`
-- Collect: age, sex, height_cm, weight_kg, diet_type, activity_level, sleep_schedule, supplements, medications
-- Calculate BMR (Mifflin-St Jeor) and TDEE
-- Store as JSON in `data/user_profiles/{user_id}.json`
-- See SPEC.md "Stage 0" for exact formulas and activity multipliers
+---
 
-### Stage 2 — Nutritional Calibration (`stage2/`)
-- File: `stage2/nutrition.py`
-- Input: `food_items` list from Stage 1
-- Lookup hierarchy: IFCT 2017 → USDA API → INDB → Groq fallback
-- For IFCT/INDB: load from local `data/nutrition_db/` CSV/JSON files
-- For USDA: hit `api.nal.usda.gov/fdc/v1/foods/search` (needs `FDC_API_KEY` env var)
-- For Groq fallback: structured prompt requesting JSON-only nutritional estimate
-- Track 13 nutrients: calories, carbs, protein, fat, fiber, glycemic_load, tryptophan, omega3, iron, magnesium, b6, b12, zinc
-- Portion scaling based on portion_g (default 250g if unknown)
-- Cache Groq responses in `data/nutrition_cache.json` to avoid repeat queries
-- See SPEC.md "Stage 2" for full nutrient table and Groq prompt
+## Stage Summary (SPEC.md Is Source of Truth)
 
-### Stage 3 — Gut Microbiome Proxy (`stage3/`)
-- File: `stage3/gut_proxy.py`
-- Input: Stage 2 nutrition data + user digestion self-report
-- Calculate 3 proxies:
-  - Microbiome Diversity Index (MDI): fiber-based scoring with fermented food/stool modifiers
-  - Inflammation Risk Score (IRS): weighted sum of pro/anti-inflammatory dietary factors
-  - Digestion Stability Score (DSS): Bristol scale + bloating + gas penalties
-- All formulas with exact thresholds are in SPEC.md "Stage 3"
-- Clamp all scores to [0.0, 1.0]
+| Stage | Module | Notes |
+|-------|--------|--------|
+| 0 | `stage0/profile.py` | Age, sex, anthropometrics, diet, activity, sleep schedule → BMR, TDEE |
+| 1 | `stage1/pipeline.py` | Dual vision; mismatch logging |
+| 2 | `stage2/nutrition.py` | 4-tier lookup; `portion_g` default 250g if unknown; Groq cache |
+| 3 | `stage3/gut_proxy.py` | Digestion self-report + Stage 2 → MDI, IRS, DSS ∈ [0,1] |
+| 4 | `stage4/mood.py` | Self-report mood/cognitive/energy/anxiety + tryptophan context |
+| 5 | `stage5/metabolic.py` | GL, fiber attenuation, crash, late-night (e.g. after 21:00) |
+| 6 | `stage6/sleep.py` | Sleep report + 7d history → debt, CRI, neuro stress |
+| 7 | `stage7/patterns.py` | ≥30 days logs → correlations, \|z\|>2 anomalies, Groq narrative |
+| 8 | `stage8/baseline.py` | ≥30 days → baselines; CV &lt; 15% stability check |
+| 9 | `stage9/risk.py` | ≥7 days history + baselines → flags, mild/moderate/elevated |
+| 10 | `stage10/insights.py` | Groq bullets + mandatory disclaimer |
 
-### Stage 4 — Mood & Cognitive Logging (`stage4/`)
-- File: `stage4/mood.py`
-- Input: user self-report (emoji, rating 1-10, cognitive_state, energy, anxiety)
-- Normalize emoji → numeric score using PANAS-derived mapping
-- Add tryptophan context from Stage 2
-- Track hours_since_meal (derived from Stage 1 timestamp)
-- See SPEC.md "Stage 4" for emoji-to-score table
+Stages 3–6 run after Stage 2; 7–8 need **30** days of `data/daily_logs/`; 9 benefits from **7+** days.
 
-### Stage 5 — Metabolic Response (`stage5/`)
-- File: `stage5/metabolic.py`
-- Input: Stage 2 nutrition + meal timing + Stage 0 baseline
-- Estimate glucose spike from glycemic load
-- Apply fiber attenuation factor
-- Calculate energy crash probability
-- Apply late-night meal penalty (meals after 21:00)
-- See SPEC.md "Stage 5" for all formulas
+---
 
-### Stage 6 — Sleep & Physiology (`stage6/`)
-- File: `stage6/sleep.py`
-- Input: user sleep self-report
-- Calculate: sleep_debt, cumulative_debt_7d, Circadian Regularity Index (CRI)
-- Compute neurological_stress_proxy (multi-factor weighted score)
-- See SPEC.md "Stage 6" for CRI formula and stress weights
+## CLI (`run_pipeline.py`)
 
-### Stage 7 — Time-Series Pattern Analysis (`stage7/`)
-- File: `stage7/patterns.py`
-- Input: 30 days of accumulated Stages 2-6 data
-- Sliding-window correlation analysis (acute/short/medium/long windows)
-- Compute pairwise Pearson correlations between food metrics and outcomes
-- Z-score anomaly detection on 7-day rolling windows (flag if |z| > 2.0)
-- Send correlation matrix to Groq for natural-language summarization
-- See SPEC.md "Stage 7" for correlation targets and window definitions
+Requires existing profile: `stage0.profile.run(user_id, {...})` first.
 
-### Stage 8 — Baseline Creation (`stage8/`)
-- File: `stage8/baseline.py`
-- Input: 30 days of all stage outputs
-- Compute trimmed means, medians, modes for 8 baseline metrics
-- Stability check: CV < 15% over last 14 days
-- See SPEC.md "Stage 8" for metric list and CV formula
+Example:
 
-### Stage 9 — Neurological Risk Detection (`stage9/`)
-- File: `stage9/risk.py`
-- Input: baselines + rolling stage outputs
-- Check 8 risk signals against duration thresholds
-- Score: 0 flags=none, 1-2=mild, 3-4=moderate, 5+=elevated
-- See SPEC.md "Stage 9" for signal-threshold table
-
-### Stage 10 — Insight Generation (`stage10/`)
-- File: `stage10/insights.py`
-- Input: all stage outputs
-- Send pipeline summary to Groq with structured insight prompt
-- Generate 3-5 actionable, non-diagnostic insights
-- Always append disclaimer
-- See SPEC.md "Stage 10" for Groq prompt template
-
-## Shared Utilities
-Create these in a `utils/` directory:
-- `utils/groq_client.py` — Shared Groq API client with exponential backoff, 429 retry, response caching
-- `utils/storage.py` — JSON read/write helpers, SQLite connection, data directory management
-- `utils/validators.py` — Input schema validation for each stage's expected input
-- `utils/config.py` — Environment variable loading (GROQ_API_KEY, FDC_API_KEY, etc.)
-
-## Data Directory Structure
-```
-data/
-  user_profiles/          # Stage 0 output
-  nutrition_db/           # IFCT, INDB local CSV/JSON files
-  nutrition_cache.json    # Groq nutritional response cache
-  daily_logs/             # Per-day aggregated stage outputs
-    2026-03-13.json
-    2026-03-14.json
-  baselines/              # Stage 8 output
-  synthetic/              # Stage SIM test data
+```bash
+python run_pipeline.py --image meal.jpg --user YOUR_USER_ID \
+  --mood-emoji "😐" --mood-rating 5 \
+  --cognitive-state clear --energy-level moderate --anxiety-level none \
+  --bloating none --stool-quality 4 --gas-discomfort none \
+  --sleep-onset 23:30 --wake-time 06:15 --sleep-quality fair
 ```
 
-## Synthetic Data (Stage SIM)
-- File: `synthetic/generate.py`
-- Generate 30 days: 90 meals, 90 mood logs, 90 digestion reports, 30 sleep logs
-- Vegetarian Indian diet only
-- Include 2-3 "bad weeks" (high sugar, late meals, poor sleep) and 1 "good week"
-- 3-5 deliberate food misclassifications for retraining loop testing
-- See SPEC.md "Synthetic Data Simulation" for full rules
+Relevant flags: `--fermented-food`, `--night-awakenings`, `--caffeine-after-14h`, `--screen-before-bed`, `--meal-to-bed-hours`, `--skip-groq`. Stage 6 skipped if `--sleep-onset` / `--wake-time` omitted.
 
-## Code Style
-- Python, clean and simple. No over-engineering.
-- Type hints on function signatures.
-- Minimal comments — only where logic is non-obvious.
-- Each stage module exposes a single `run()` function.
-- Each `run()` takes the previous stage's output dict and returns its own output dict.
-- Use dataclasses or TypedDicts for stage I/O schemas.
+---
 
-## Testing Strategy
-- Build `tests/test_stage{N}.py` for each stage.
-- Test with synthetic data first (`synthetic/generate.py`).
-- Each test should verify: (a) output schema matches spec, (b) values are within plausible ranges, (c) edge cases (empty input, API failure).
+## Code Conventions
+
+- Type hints on public functions; single `run()` per stage module where applicable.
+- TypedDicts/dataclasses for stage I/O where helpful.
+- No clinical claims; Groq prompts must stay non-diagnostic.
+- **Prefer user/API input** over hardcoded defaults for anything that changes per person or per day (see audit prompt below).
+
+---
 
 ## Environment Variables
+
 ```
 GROQ_API_KEY=gsk_...
-FDC_API_KEY=...            # USDA FoodData Central
-FOOD_MODEL_ID=nateraw/food  # Override EfficientNet model
+FDC_API_KEY=...           # optional, Stage 2
+FOOD_MODEL_ID=nateraw/food
 ```
 
-## Pipeline Runner
-- File: `run_pipeline.py`
-- Chains all stages: 0 → 1 → 2 → 3 → (4,5,6 parallel) → 7 → 8 → 9 → 10
-- Stages 3, 4, 5, 6 can run after Stage 2 completes (they don't depend on each other)
-- Stage 7 needs 30 days accumulated before it runs
-- CLI interface: `python run_pipeline.py --image meal.jpg --user balaji_001`
+Use `.env` (see `.env.example` if present).
 
-## Important Notes
-- ALL outputs are informational, never diagnostic. No clinical claims anywhere.
-- Groq is the primary reasoning engine AND the fallback layer — not just a backup.
-- Read SPEC.md before building each stage. Every formula, threshold, and proxy has a research citation.
-- Don't build Streamlit UI until all 10 stages work end-to-end in CLI.
+---
+
+## Testing
+
+- **All stages**: `python -m pytest tests/ -v` (~311 tests)
+- **E2E**: `python e2e_test.py`
+- **Synthetic 30-day**: `python synthetic/generate.py` (seed 42; bad weeks + misclassifications for regression)
+
+---
+
+## Synthetic Data (Stage SIM)
+
+- **`synthetic/generate.py`**: vegetarian Indian diet; 2–3 bad weeks, 1 good week; deliberate misclassifications for retraining tests. Not a substitute for real user input in production.
+
+---
+
+## Important Notes for Contributors & AI Agents
+
+1. Read **SPEC.md** before changing formulas or thresholds (citations live there).
+2. **API + CLI** should both feed the same stage contracts; keep **`utils/schemas.py`** and stage `run()` inputs aligned.
+3. Streamlit is **not** required for the product; **FastAPI + any frontend** is the current web direction.
+4. Tighten CORS and auth for any public deployment.
+5. Periodically **audit hardcoded values** — defaults are OK for missing optional fields, but **insights, risk narrative, and per-user summaries must derive from that user’s logs and inputs**, not static demo strings.

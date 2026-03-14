@@ -15,7 +15,12 @@
       "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -x -q --tb=short 2>&1 | tail -20)",
       "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python synthetic/generate.py 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q --tb=short 2>&1 | tail -10)",
-      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q 2>&1 | tail -5)"
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -q 2>&1 | tail -5)",
+      "Bash(grep -rn \"if.*>=\" C:/Users/cvbal/Desktop/GutSense-Mood-Prediction/stage[0-9] --include=\"*.py\" | grep -E \">\\\\s*[0-9]+|<\\\\s*[0-9]+\" | head -30)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/test_stage10.py tests/test_stage7.py tests/test_stage0.py -v --tb=short 2>&1 | tail -60)",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/test_stage10.py tests/test_stage7.py -v --tb=long 2>&1 | grep -A 30 \"FAILED\\\\|test_run_skip_groq\")",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/test_stage10.py tests/test_stage7.py -v --tb=short 2>&1 | tail -25')",
+      "Bash(cd \"C:\\\\Users\\\\cvbal\\\\Desktop\\\\GutSense-Mood-Prediction\" && python -m pytest tests/ -v --tb=short 2>&1 | tail -20)"
     ]
   }
 }

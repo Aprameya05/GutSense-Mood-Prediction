@@ -364,7 +364,12 @@ def run(daily_records: list[dict], skip_groq: bool = False) -> dict:
     mdi_trend = _linear_trend(daily_records, "microbiome_diversity_index")
 
     if skip_groq:
-        groq_summary = "Groq summarization skipped."
+        sig_count = sum(1 for c in correlations if c["significant"])
+        groq_summary = (
+            f"Groq summarization skipped. "
+            f"{sig_count}/{len(correlations)} correlations significant; "
+            f"{len(anomalies)} anomaly event(s) detected across {len(daily_records)} days."
+        )
     else:
         groq_summary = _groq_summary(correlations, len(anomalies))
 

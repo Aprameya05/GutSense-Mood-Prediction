@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from utils.config import GROQ_API_KEY, NUTRITION_CACHE_PATH
+from utils.config import GROQ_API_KEY, GROQ_CHAT_MODEL, NUTRITION_CACHE_PATH
 from utils.storage import read_json, write_json
 
 _client = None
@@ -29,7 +29,7 @@ def _cache_key(messages: list, model: str) -> str:
 
 def chat(
     messages: list,
-    model: str = "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: str = GROQ_CHAT_MODEL,
     max_tokens: int = 600,
     temperature: float = 0.1,
     use_cache: bool = True,
