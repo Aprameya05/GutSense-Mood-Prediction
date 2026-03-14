@@ -89,13 +89,14 @@ def _load_daily_logs(logs_dir: Path) -> list[dict]:
 
 # ─── Public API ───────────────────────────────────────────────────────────────
 
-def run(user_id: str, daily_logs_dir: Path | None = None) -> BaselineOutput:
+def run(user_id: str, records: list[dict] = None, daily_logs_dir: Path | None = None) -> BaselineOutput:
     """
     Compute personalized baselines from 30+ days of daily logs.
 
     Args:
         user_id: User identifier for saving baseline file.
-        daily_logs_dir: Override path to daily logs directory.
+        records: Pre-loaded daily log dictionaries (e.g. from MongoDB).
+        daily_logs_dir: Override path to daily logs directory (used if records is None).
 
     Returns:
         BaselineOutput dict with 8 baseline metrics, stability assessment,
@@ -104,8 +105,9 @@ def run(user_id: str, daily_logs_dir: Path | None = None) -> BaselineOutput:
     Raises:
         ValueError: If fewer than 30 days of data are available.
     """
-    logs_path = Path(daily_logs_dir) if daily_logs_dir else DAILY_LOGS_DIR
-    records = _load_daily_logs(logs_path)
+    if records is None:
+        logs_path = Path(daily_logs_dir) if daily_logs_dir else DAILY_LOGS_DIR
+        records = _load_daily_logs(logs_path)
 
     if len(records) < 30:
         raise ValueError(
