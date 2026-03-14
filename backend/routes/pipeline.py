@@ -190,6 +190,24 @@ async def get_daily_log(date: str, current_user: dict = Depends(get_current_user
     log.pop("_id", None)
     return log
 
+@router.get("/latest-log")
+async def get_latest_log(current_user: dict = Depends(get_current_user)):
+    db = get_db()
+    cursor = db.daily_logs.find({"user_id": current_user["user_id"]}).sort("date", -1).limit(1)
+    logs = await cursor.to_list(length=1)
+    if not logs:
+        # Return empty structured log
+        date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        return {
+           "date": date, "meals": [], "sleep": None, "daily_gut": None,
+           "daily_totals": {
+              "calories_kcal": 0, "carbs_g": 0, "protein_g": 0, "fat_g": 0, "fiber_g": 0
+           }
+        }
+    log = logs[0]
+    log.pop("_id", None)
+    return log
+
 @router.get("/history")
 async def get_history(from_date: str, to_date: str, current_user: dict = Depends(get_current_user)):
     db = get_db()

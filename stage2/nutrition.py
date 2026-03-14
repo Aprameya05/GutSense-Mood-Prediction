@@ -372,6 +372,11 @@ def run(stage1_output: dict, portion_g: float = _DEFAULT_PORTION_G) -> dict:
 
     totals = _aggregate_totals(items)
 
+    print(f"[stage2] Computed nutrition for {len(food_items)} items.")
+    for it in items:
+        print(f"   - {it['food_item']} ({it['portion_g']}g from {it['source_db']}): {it.get('carbohydrates_g', 0)}g carbs, {it.get('protein_g', 0)}g protein, {it.get('fat_g', 0)}g fat")
+    print(f"[stage2] Totals: {totals.get('calories_kcal', 0)} kcal, {totals.get('carbohydrates_g', 0)}g carbs, {totals.get('protein_g', 0)}g protein, {totals.get('fat_g', 0)}g fat")
+
     return {
         "items": items,
         "totals": totals,

@@ -95,6 +95,11 @@ export const ApiServices = {
     const res = await apiClient.get(`/api/daily-log/${date}?user_id=${userId}`);
     return res.data as DailyLog;
   },
+  getLatestLog: async () => {
+    const userId = useAppStore.getState().profile?.user_id;
+    const res = await apiClient.get(`/api/latest-log?user_id=${userId}`);
+    return res.data as DailyLog;
+  },
   getHistory: async (from: string, to: string) => {
     const userId = useAppStore.getState().profile?.user_id;
     const res = await apiClient.get(`/api/history?user_id=${userId}&from=${from}&to=${to}`);

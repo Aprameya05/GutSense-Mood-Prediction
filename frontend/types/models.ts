@@ -52,7 +52,7 @@ export interface NutritionRecord {
 
 export interface NutritionTotals {
   calories_kcal: number;
-  carbs_g: number;                
+  carbohydrates_g: number;                
   protein_g: number;
   fat_g: number;
   fiber_g: number;

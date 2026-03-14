@@ -38,7 +38,7 @@ export default function MealStep2_FoodReview() {
       Alert.alert('Analysis Failed', 'Could not process the image. Please try again or add items manually.');
       // Create fallback dummy data so user can proceed manually if offline
       const fallbackS1 = { food_items: [], en_pred: "unknown", confidence: 0, source: "stub" as any, timestamp: new Date().toISOString() };
-      const fallbackS2 = { items: [], totals: { calories_kcal: 0, carbs_g: 0, protein_g: 0, fat_g: 0, fiber_g: 0, glycemic_load: 'unknown' as any, tryptophan_mg: 0, omega3_mg: 0, iron_mg: 0, magnesium_mg: 0, b6_mg: 0, b12_mcg: 0, zinc_mg: 0 }, timestamp: new Date().toISOString() };
+      const fallbackS2 = { items: [], totals: { calories_kcal: 0, carbohydrates_g: 0, protein_g: 0, fat_g: 0, fiber_g: 0, glycemic_load: 'unknown' as any, tryptophan_mg: 0, omega3_mg: 0, iron_mg: 0, magnesium_mg: 0, b6_mg: 0, b12_mcg: 0, zinc_mg: 0 }, timestamp: new Date().toISOString() };
       setStage1And2(fallbackS1, fallbackS2);
     } finally {
       setLoading(false);

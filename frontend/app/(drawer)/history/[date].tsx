@@ -30,7 +30,7 @@ export default function DayDrillDownScreen() {
           <View style={styles.totalsRow}>
             <View style={styles.col}><Text style={styles.tVal}>{log.daily_totals?.calories_kcal || 0}</Text><Text style={styles.tUnit}>kcal</Text></View>
             <View style={styles.col}><Text style={styles.tVal}>{log.daily_totals?.protein_g || 0}g</Text><Text style={styles.tUnit}>Prot</Text></View>
-            <View style={styles.col}><Text style={styles.tVal}>{log.daily_totals?.carbs_g || 0}g</Text><Text style={styles.tUnit}>Carb</Text></View>
+            <View style={styles.col}><Text style={styles.tVal}>{log.daily_totals?.carbohydrates_g || 0}g</Text><Text style={styles.tUnit}>Carb</Text></View>
             <View style={styles.col}><Text style={styles.tVal}>{log.daily_totals?.fat_g || 0}g</Text><Text style={styles.tUnit}>Fat</Text></View>
             <View style={styles.col}><Text style={styles.tVal}>{log.daily_totals?.fiber_g || 0}g</Text><Text style={styles.tUnit}>Fib</Text></View>
           </View>

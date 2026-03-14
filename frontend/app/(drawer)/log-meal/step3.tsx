@@ -13,7 +13,7 @@ export default function MealStep3_Nutrition() {
   };
 
   const totals = stage2?.totals || {
-    calories_kcal: 0, carbs_g: 0, protein_g: 0, fat_g: 0, fiber_g: 0,
+    calories_kcal: 0, carbohydrates_g: 0, protein_g: 0, fat_g: 0, fiber_g: 0,
     tryptophan_mg: 0, omega3_mg: 0, iron_mg: 0, magnesium_mg: 0, b6_mg: 0, b12_mcg: 0, zinc_mg: 0
   } as any;
 
@@ -42,7 +42,7 @@ export default function MealStep3_Nutrition() {
 
         <Text style={styles.sectionTitle}>Macros</Text>
         <View style={styles.grid}>
-          <NutrientCard label="Carbs" value={totals.carbs_g} unit="g" icon={Wheat} color="#eab308" />
+          <NutrientCard label="Carbs" value={totals.carbohydrates_g} unit="g" icon={Wheat} color="#eab308" />
           <NutrientCard label="Protein" value={totals.protein_g} unit="g" icon={Beef} color="#ef4444" />
           <NutrientCard label="Fat" value={totals.fat_g} unit="g" icon={Droplet} color="#f97316" />
           <NutrientCard label="Fiber" value={totals.fiber_g} unit="g" icon={Flame} color={totals.fiber_g > 8 ? '#22c55e' : '#0ea5e9'} />

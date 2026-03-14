@@ -13,18 +13,19 @@ export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [riskCount, setRiskCount] = useState(0);
-
-  const getTodayString = () => getLocalTodayString();
+  const [latestLog, setLatestLog] = useState<any>(null);
 
   const loadData = useCallback(async () => {
     try {
-      const today = getTodayString();
       const [logRes, profileRes] = await Promise.all([
-        ApiServices.getDailyLog(today).catch(() => null),
+        ApiServices.getLatestLog().catch(() => null),
         ApiServices.getProfile().catch(() => null)
       ]);
       
-      if (logRes) setDailyLog(today, logRes);
+      if (logRes) {
+        setLatestLog(logRes);
+        setDailyLog(logRes.date, logRes);
+      }
       if (profileRes) setProfile(profileRes);
 
       if (riskUnlocked) {
@@ -51,7 +52,7 @@ export default function DashboardScreen() {
     );
   }
 
-  const log = todayLog || ({ meals: [], daily_totals: { calories_kcal: 0, fiber_g: 0 }, sleep: null, daily_gut: null } as any);
+  const log = latestLog || ({ meals: [], daily_totals: { calories_kcal: 0, fiber_g: 0 }, sleep: null, daily_gut: null } as any);
   const mealCount = log.meals?.length || 0;
   
   const lastMeal = mealCount > 0 ? log.meals[mealCount - 1] : null;
@@ -106,7 +107,7 @@ export default function DashboardScreen() {
             <Utensils color="#94a3b8" size={24} style={styles.cardIcon} />
             <Text style={styles.cardValue}>{mealCount}</Text>
             <Text style={styles.cardLabel}>Meals Logged</Text>
-            <Text style={styles.cardSubtext}>{log.daily_totals?.calories_kcal || 0} kcal</Text>
+            <Text style={styles.cardSubtext}>{log.daily_totals?.carbohydrates_g || 0}g carbs</Text>
           </View>
         </View>
 

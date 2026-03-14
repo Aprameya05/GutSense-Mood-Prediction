@@ -56,7 +56,7 @@ export default function MealStep6_Summary() {
           <View style={styles.row}>
             <View style={styles.col}><Text style={styles.val}>{stage2?.totals?.calories_kcal || 0}</Text><Text style={styles.lbl}>kcal</Text></View>
             <View style={styles.col}><Text style={styles.val}>{stage2?.totals.protein_g}g</Text><Text style={styles.lbl}>Prot</Text></View>
-            <View style={styles.col}><Text style={styles.val}>{stage2?.totals.carbs_g}g</Text><Text style={styles.lbl}>Carb</Text></View>
+            <View style={styles.col}><Text style={styles.val}>{stage2?.totals.carbohydrates_g}g</Text><Text style={styles.lbl}>Carb</Text></View>
             <View style={styles.col}><Text style={styles.val}>{stage2?.totals.fat_g}g</Text><Text style={styles.lbl}>Fat</Text></View>
           </View>
         </View>
