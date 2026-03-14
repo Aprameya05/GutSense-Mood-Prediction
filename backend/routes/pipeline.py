@@ -88,7 +88,8 @@ async def save_meal(req: MealSaveRequest, current_user: dict = Depends(get_curre
             "meals": [meal_entry],
             "sleep": None,
             "daily_gut": None,
-            "daily_totals": meal_entry.get("stage2", {}).get("totals", {}) # Start with first meal
+            "daily_totals": meal_entry.get("stage2", {}).get("totals", {}), # Start with first meal
+            "daily_mood_summary": {"avg_mood_score": meal_entry.get("stage4", {}).get("mood_score", 0)}
         }
         await db.daily_logs.insert_one(daily_log)
     else:
@@ -106,9 +107,13 @@ async def save_meal(req: MealSaveRequest, current_user: dict = Depends(get_curre
             else:
                  updated_totals[k] = val2 if val2 else val1 # overwrite strings
 
+        all_meals = daily_log.get("meals", []) + [meal_entry]
+        mood_scores = [m.get("stage4", {}).get("mood_score") for m in all_meals if m.get("stage4") and "mood_score" in m["stage4"]]
+        avg_mood = sum(mood_scores) / len(mood_scores) if mood_scores else 0
+
         await db.daily_logs.update_one(
             {"_id": doc_id},
-            {"$push": {"meals": meal_entry}, "$set": {"daily_totals": updated_totals}}
+            {"$push": {"meals": meal_entry}, "$set": {"daily_totals": updated_totals, "daily_mood_summary": {"avg_mood_score": avg_mood}}}
         )
         
     return {"status": "success", "meal_id": meal_entry["meal_id"]}
@@ -224,8 +229,9 @@ async def get_history(from_date: str, to_date: str, current_user: dict = Depends
 
 async def _get_flat_records_mongo(user_id: str):
     db = get_db()
-    cursor = db.daily_logs.find({"user_id": user_id}).sort("date", 1)
-    logs = await cursor.to_list(length=365)
+    cursor = db.daily_logs.find({"user_id": user_id}).sort("date", -1).limit(7)
+    logs = await cursor.to_list(length=7)
+    logs.reverse()
     
     from utils.flatten import extract_flat_record
     return [extract_flat_record(log) for log in logs]
@@ -233,19 +239,20 @@ async def _get_flat_records_mongo(user_id: str):
 @router.get("/trends")
 async def get_trends(current_user: dict = Depends(get_current_user)):
     records = await _get_flat_records_mongo(current_user["user_id"])
-    if len(records) < 30:
-         raise HTTPException(status_code=400, detail="Not enough data yet (30 days required)")
+    if len(records) < 7:
+         raise HTTPException(status_code=400, detail="Not enough data yet (7 days required)")
     from stage7.patterns import run as stage7_run
     return stage7_run(records, skip_groq=False)
 
 @router.get("/baselines")
 async def get_baselines(current_user: dict = Depends(get_current_user)):
     db = get_db()
-    cursor = db.daily_logs.find({"user_id": current_user["user_id"]}).sort("date", 1)
-    logs = await cursor.to_list(length=365)
+    cursor = db.daily_logs.find({"user_id": current_user["user_id"]}).sort("date", -1).limit(7)
+    logs = await cursor.to_list(length=7)
+    logs.reverse()
     
-    if len(logs) < 30:
-        raise HTTPException(status_code=400, detail="Not enough data yet (30 days required)")
+    if len(logs) < 7:
+        raise HTTPException(status_code=400, detail="Not enough data yet (7 days required)")
         
     user = await db.users.find_one({"user_id": current_user["user_id"]})
     if not user:
@@ -273,8 +280,8 @@ async def get_risks(current_user: dict = Depends(get_current_user)):
 async def get_insights(current_user: dict = Depends(get_current_user)):
     db = get_db()
     records = await _get_flat_records_mongo(current_user["user_id"])
-    if len(records) < 30:
-         raise HTTPException(status_code=400, detail="Not enough data yet (30 days required for full insights)")
+    if len(records) < 7:
+         raise HTTPException(status_code=400, detail="Not enough data yet (7 days required for full insights)")
          
     user = await db.users.find_one({"user_id": current_user["user_id"]})
     today_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")

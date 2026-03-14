@@ -2,7 +2,7 @@
   "baseline_mood": 0.0,
   "baseline_sleep_hours": 6.7,
   "baseline_glucose_spike": "moderate",
-  "baseline_digestion_stability": 1.0,
+  "baseline_digestion_stability": 0.9952,
   "baseline_MDI": 0.5571,
   "baseline_inflammation_risk": 0.5032,
   "baseline_cognitive_score": 0.0,
@@ -19,7 +19,7 @@
       "stable": true
     },
     "digestion_stability": {
-      "cv_percent": 0.0,
+      "cv_percent": 4.05,
       "stable": true
     },
     "MDI": {
@@ -39,5 +39,5 @@
       "stable": true
     }
   },
-  "timestamp": "2026-03-14T07:26:36.174594+00:00"
+  "timestamp": "2026-03-14T10:18:41.706312+00:00"
 }

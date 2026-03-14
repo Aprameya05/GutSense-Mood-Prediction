@@ -25,7 +25,7 @@ export default function BaselinesScreen() {
         <Text style={styles.lockedSub}>
           It takes 30 days to establish your personal biological baselines for accurate deviations.
         </Text>
-        <Text style={styles.progressText}>You have logged {daysLogged}/30 days.</Text>
+        <Text style={styles.progressText}>You have logged {daysLogged}/7 days.</Text>
       </View>
     );
   }
@@ -86,7 +86,7 @@ export default function BaselinesScreen() {
 
         <Text style={styles.sectionTitle}>Neuro & Routine</Text>
         <View style={styles.grid}>
-          <BaselineBox label="Mood Average" value={activeData.baseline_mood} unit="/ 10" detailRef="mood" />
+          <BaselineBox label="Mood Average" value={activeData.baseline_mood} unit="(Range: -2 to +2)" detailRef="mood" />
           <BaselineBox label="Sleep Duration" value={activeData.baseline_sleep_hours} unit="hrs" detailRef="sleep_hours" />
           <BaselineBox label="Cognitive Score" value={activeData.baseline_cognitive_score} unit="pts" detailRef="cognitive_score" />
           <BaselineBox label="Neuro Stress" value={activeData.baseline_neuro_stress} unit="idx" detailRef="neuro_stress" />

@@ -3,7 +3,7 @@ import { ScrollView, View, Text, StyleSheet, Pressable, RefreshControl, Activity
 import { useAppStore } from '../../store/useAppStore';
 import { ApiServices } from '../../api/services';
 import { useRouter } from 'expo-router';
-import { HeartPulse, Utensils, Moon, Activity, AlertCircle } from 'lucide-react-native';
+import { HeartPulse, Utensils, Moon, Activity, AlertCircle, Smile } from 'lucide-react-native';
 import { getLocalTodayString } from '../../utils/date';
 
 export default function DashboardScreen() {
@@ -56,8 +56,8 @@ export default function DashboardScreen() {
   const mealCount = log.meals?.length || 0;
   
   const lastMeal = mealCount > 0 ? log.meals[mealCount - 1] : null;
-  const moodEmoji = lastMeal?.stage4?.emoji_used || '0';
-  const moodLabel = lastMeal?.stage4?.mood_label || '0';
+  const moodEmoji = lastMeal?.stage4?.emoji_used || <Smile color="#94a3b8" size={24} />;
+  const moodLabel = lastMeal?.stage4?.mood_label || 'Unrecorded';
 
   const mdi = log.daily_gut?.microbiome_diversity_index || 0;
   const getTrafficLight = (v: number) => {
@@ -124,7 +124,9 @@ export default function DashboardScreen() {
         {/* Latest Mood */}
         <View style={styles.cardWrapper}>
           <View style={styles.card}>
-            <Text style={[styles.cardIcon, { fontSize: 24 }]}>{moodEmoji}</Text>
+            <View style={{ marginBottom: 12, height: 24, justifyContent: 'center' }}>
+              {typeof moodEmoji === 'string' ? <Text style={[styles.cardIcon, { fontSize: 24, marginBottom: 0 }]}>{moodEmoji}</Text> : moodEmoji}
+            </View>
             <Text style={styles.cardValue} numberOfLines={1}>{moodLabel}</Text>
             <Text style={styles.cardLabel}>Latest Mood</Text>
           </View>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions, Pressable } from 'react-native';
 import { useAppStore } from '../../store/useAppStore';
 import { ApiServices } from '../../api/services';
 import { Lock, TrendingUp, AlertTriangle, MessageSquareHeart } from 'lucide-react-native';
@@ -11,6 +11,7 @@ export default function TrendsScreen() {
   const { daysLogged, trendsUnlocked } = useAppStore();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showAllAnomalies, setShowAllAnomalies] = useState(false);
 
   useEffect(() => {
     if (trendsUnlocked) {
@@ -24,9 +25,9 @@ export default function TrendsScreen() {
         <Lock color="#334155" size={64} style={{ marginBottom: 24 }} />
         <Text style={styles.lockedTitle}>Trends Locked</Text>
         <Text style={styles.lockedSub}>
-          Your personalized trends will unlock after 30 days of logging. You need enough data for statistically significant pattern detection.
+          Your personalized trends will unlock after 7 days of logging. You need enough data for statistically significant pattern detection.
         </Text>
-        <Text style={styles.progressText}>You have logged {daysLogged}/30 days. Keep going!</Text>
+        <Text style={styles.progressText}>You have logged {daysLogged}/7 days. Keep going!</Text>
       </View>
     );
   }
@@ -61,7 +62,9 @@ export default function TrendsScreen() {
             <MessageSquareHeart color="#c084fc" size={24} />
             <Text style={styles.aiTitle}>AI Synthesis</Text>
           </View>
-          <Text style={styles.aiText}>{activeData.groq_summary}</Text>
+          <ScrollView style={styles.aiScrollBox} nestedScrollEnabled={true}>
+            <Text style={styles.aiText}>{activeData.groq_summary}</Text>
+          </ScrollView>
           <View style={styles.confidenceBadge}>
             <Text style={styles.confidenceText}>Confidence: {activeData.pattern_confidence.toUpperCase()}</Text>
           </View>
@@ -111,7 +114,7 @@ export default function TrendsScreen() {
         </View>
 
         <Text style={styles.sectionTitle}>Timeline Anomalies</Text>
-        {activeData.anomalies.map((a: any, i: number) => (
+        {(showAllAnomalies ? activeData.anomalies : activeData.anomalies.slice(0, 3)).map((a: any, i: number) => (
           <View key={i} style={styles.anomalyCard}>
             <AlertTriangle color="#f97316" size={20} />
             <View style={{ flex: 1 }}>
@@ -120,6 +123,17 @@ export default function TrendsScreen() {
             </View>
           </View>
         ))}
+
+        {activeData.anomalies.length > 3 && (
+          <Pressable 
+            style={styles.seeAllBtn} 
+            onPress={() => setShowAllAnomalies(!showAllAnomalies)}
+          >
+            <Text style={styles.seeAllText}>
+              {showAllAnomalies ? 'Show Less' : `See All (${activeData.anomalies.length})`}
+            </Text>
+          </Pressable>
+        )}
 
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -137,7 +151,8 @@ const styles = StyleSheet.create({
   aiSummaryCard: { backgroundColor: '#1e293b', padding: 24, borderRadius: 24, marginBottom: 32, borderWidth: 1, borderColor: '#334155' },
   aiHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
   aiTitle: { color: '#c084fc', fontSize: 20, fontWeight: '800' },
-  aiText: { color: '#e2e8f0', fontSize: 16, lineHeight: 24, marginBottom: 16 },
+  aiScrollBox: { maxHeight: 120, marginBottom: 16 },
+  aiText: { color: '#e2e8f0', fontSize: 16, lineHeight: 24 },
   confidenceBadge: { alignSelf: 'flex-start', backgroundColor: '#334155', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
   confidenceText: { color: '#94a3b8', fontSize: 12, fontWeight: '700' },
   sectionTitle: { fontSize: 20, fontWeight: '700', color: '#f8fafc', marginBottom: 16 },
@@ -154,5 +169,7 @@ const styles = StyleSheet.create({
   shiftVal: { color: '#f8fafc', fontSize: 18, fontWeight: '800', textTransform: 'capitalize' },
   anomalyCard: { flexDirection: 'row', backgroundColor: '#1e293b', padding: 16, borderRadius: 12, marginBottom: 12, alignItems: 'center', gap: 16, borderWidth: 1, borderColor: '#334155' },
   anomDate: { color: '#94a3b8', fontSize: 13, marginBottom: 4 },
-  anomDesc: { color: '#cbd5e1', fontSize: 15 }
+  anomDesc: { color: '#cbd5e1', fontSize: 15 },
+  seeAllBtn: { alignItems: 'center', paddingVertical: 12, marginTop: 4 },
+  seeAllText: { color: '#0ea5e9', fontSize: 15, fontWeight: '600' }
 });

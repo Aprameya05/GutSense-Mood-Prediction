@@ -60,7 +60,7 @@ export default function DayDrillDownScreen() {
           <View key={i} style={styles.mealCard}>
             <View style={styles.mealHeader}>
               <Utensils color="#94a3b8" size={18} />
-              <Text style={styles.mealTitle}>{m.meal_id}</Text>
+              <Text style={styles.mealTitle}>Meal {i + 1}</Text>
               <Text style={styles.mealTime}>{m.meal_time}</Text>
             </View>
             <Text style={styles.mealItems}>{m.stage1?.food_items.join(', ')}</Text>

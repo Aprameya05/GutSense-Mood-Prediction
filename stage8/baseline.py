@@ -109,13 +109,14 @@ def run(user_id: str, records: list[dict] = None, daily_logs_dir: Path | None = 
         logs_path = Path(daily_logs_dir) if daily_logs_dir else DAILY_LOGS_DIR
         records = _load_daily_logs(logs_path)
 
-    if len(records) < 30:
+    if len(records) < 7:
         raise ValueError(
-            f"Baseline requires 30+ days of data, got {len(records)}"
+            f"Baseline requires 7+ days of data, got {len(records)}"
         )
 
     records = [extract_flat_record(r) for r in records]
-    last_14 = records[-14:]
+    window_size = min(14, len(records))
+    last_14 = records[-window_size:]
 
     # --- Baseline metrics ---
     mood_scores = _extract(records, "mood_score")

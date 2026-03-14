@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../../store/useAppStore';
-import { CalendarDays, ChevronRight, Moon, Utensils } from 'lucide-react-native';
+import { CalendarDays, ChevronRight, Moon, Utensils, Smile } from 'lucide-react-native';
 import { getLocalTodayString, getLocalYesterdayString } from '../../../utils/date';
 
 export default function HistoryListScreen() {
@@ -43,7 +43,7 @@ export default function HistoryListScreen() {
             const mealsCount = log.meals?.length || 0;
             const sleepHrs = log.sleep?.sleep_hours || 0;
             const lastMeal = mealsCount > 0 ? log.meals[mealsCount - 1] : null;
-            const mood = lastMeal?.stage4?.emoji_used || '0';
+            const mood = lastMeal?.stage4?.emoji_used || <Smile color="#94a3b8" size={16} />;
 
             return (
               <Pressable key={date} style={styles.dayCard} onPress={() => router.push(`/history/${date}`)}>
@@ -62,7 +62,7 @@ export default function HistoryListScreen() {
                     <Text style={styles.metricVal}>{sleepHrs}h</Text>
                   </View>
                   <View style={styles.metric}>
-                    <Text style={{ fontSize: 16 }}>{mood}</Text>
+                    {typeof mood === 'string' ? <Text style={{ fontSize: 16 }}>{mood}</Text> : mood}
                   </View>
                 </View>
                 
